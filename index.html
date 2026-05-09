@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Only For You ❤️</title>
+<title>for you ❤️</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
 *{
@@ -18,17 +18,17 @@ body{
     height:100vh;
     overflow:hidden;
     font-family:'Poppins',sans-serif;
-    background:
-    radial-gradient(circle at top left,#ff6aa9 0%,transparent 25%),
-    radial-gradient(circle at bottom right,#ffb6d9 0%,transparent 25%),
-    linear-gradient(135deg,#120018,#2c003e,#4a005f);
     display:flex;
     justify-content:center;
     align-items:center;
+    background:
+    radial-gradient(circle at top left,#ff7eb6 0%,transparent 25%),
+    radial-gradient(circle at bottom right,#ffc2de 0%,transparent 25%),
+    linear-gradient(135deg,#130017,#2b0036,#4a005d);
     position:relative;
 }
 
-/* Bintang */
+/* stars */
 .star{
     position:absolute;
     width:2px;
@@ -43,12 +43,11 @@ body{
     to{opacity:1;}
 }
 
-/* Floating Hearts */
+/* floating hearts */
 .heart{
     position:absolute;
-    color:#ff7abf;
-    font-size:18px;
-    animation:float 10s linear infinite;
+    color:#ff8fc5;
+    animation:float 8s linear infinite;
     opacity:.7;
 }
 
@@ -66,27 +65,27 @@ body{
     }
 }
 
-/* Card */
+/* card */
 .card{
     width:370px;
-    padding:40px 30px;
+    padding:42px 30px;
     border-radius:35px;
     background:rgba(255,255,255,.08);
-    backdrop-filter:blur(15px);
+    backdrop-filter:blur(14px);
     border:1px solid rgba(255,255,255,.15);
     box-shadow:
-    0 0 30px rgba(255,105,180,.3),
-    0 0 60px rgba(255,105,180,.15);
+    0 0 35px rgba(255,105,180,.25),
+    0 0 70px rgba(255,105,180,.15);
     text-align:center;
     position:relative;
     overflow:hidden;
-    animation:show 1.5s ease;
+    animation:show 1.3s ease;
 }
 
 @keyframes show{
     from{
         opacity:0;
-        transform:translateY(40px) scale(.9);
+        transform:translateY(30px) scale(.95);
     }
     to{
         opacity:1;
@@ -94,20 +93,19 @@ body{
     }
 }
 
-/* Glow Border */
 .card::before{
     content:"";
     position:absolute;
     inset:-2px;
     border-radius:35px;
     padding:2px;
-    background:linear-gradient(45deg,#ff4fa3,#ffffff,#ff87c5,#ff4fa3);
+    background:linear-gradient(45deg,#ff5ba8,#ffffff,#ff9bcf,#ff5ba8);
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite:xor;
             mask-composite:exclude;
-    animation:rotate 6s linear infinite;
+    animation:rotate 7s linear infinite;
 }
 
 @keyframes rotate{
@@ -116,59 +114,56 @@ body{
     }
 }
 
-.top{
+.title{
     font-family:'Great Vibes',cursive;
-    font-size:52px;
+    font-size:54px;
     color:white;
-    margin-bottom:10px;
-    text-shadow:0 0 15px rgba(255,255,255,.6);
+    margin-bottom:8px;
+    text-shadow:0 0 18px rgba(255,255,255,.6);
 }
 
-.subtitle{
-    color:#ffd4ea;
-    font-size:14px;
-    margin-bottom:25px;
+.small{
+    color:#ffd7ea;
+    font-size:13px;
     letter-spacing:2px;
+    margin-bottom:25px;
 }
 
 .message{
     color:white;
     font-size:16px;
-    line-height:1.8;
-    margin-bottom:30px;
+    line-height:1.9;
+    margin-bottom:28px;
+    animation:fade .5s ease;
 }
 
 .highlight{
-    color:#ff9bd0;
+    color:#ffaad4;
     font-weight:600;
 }
 
 button{
     border:none;
-    padding:14px 32px;
+    padding:14px 30px;
     border-radius:40px;
-    background:linear-gradient(45deg,#ff4fa3,#ff86c8);
+    background:linear-gradient(45deg,#ff5ba8,#ff9ccf);
     color:white;
     font-size:15px;
     font-weight:600;
     cursor:pointer;
-    transition:.4s;
-    box-shadow:0 10px 25px rgba(255,79,163,.4);
+    transition:.35s;
+    box-shadow:0 10px 25px rgba(255,91,168,.35);
 }
 
 button:hover{
-    transform:translateY(-4px) scale(1.05);
-    box-shadow:0 15px 35px rgba(255,79,163,.6);
-}
-
-.fade{
-    animation:fade .7s ease;
+    transform:translateY(-3px) scale(1.04);
+    box-shadow:0 15px 35px rgba(255,91,168,.5);
 }
 
 @keyframes fade{
     from{
         opacity:0;
-        transform:translateY(10px);
+        transform:translateY(8px);
     }
     to{
         opacity:1;
@@ -176,11 +171,10 @@ button:hover{
     }
 }
 
-/* Music Note */
 .music{
     position:absolute;
     top:18px;
-    right:20px;
+    right:22px;
     color:white;
     font-size:20px;
     animation:pulse 1.5s infinite;
@@ -188,36 +182,95 @@ button:hover{
 
 @keyframes pulse{
     0%,100%{transform:scale(1);}
-    50%{transform:scale(1.2);}
+    50%{transform:scale(1.15);}
 }
 </style>
 </head>
 <body>
 
 <div class="card">
+
     <div class="music">♫</div>
 
-    <div class="top">For You</div>
-    <div class="subtitle">ONLY MY FAVORITE PERSON</div>
+    <div class="title">for you</div>
+    <div class="small">made with love</div>
 
-    <div class="message fade" id="msg">
-        Dari semua orang yang pernah aku kenal...  
-        <span class="highlight">kamu</span> tetap jadi alasan ternyaman buat aku pulang. ❤️
+    <div class="message" id="message">
+        dari semua orang yang pernah hadir di hidup aku,  
+        <span class="highlight">kamu</span> tetap jadi orang paling nyaman buat aku. ❤️
     </div>
 
-    <button onclick="nextMessage()">Klik Sayang ✨</button>
+    <button onclick="changeMessage()">klik ini ✨</button>
 </div>
 
 <script>
 const messages = [
-`Kalau dunia lagi jahat sama kamu, sini peluk aku aja 🤍`,
+`aku sayang banget sama kamu ❤️`,
 
-`Aku ga butuh yang sempurna, aku cuma butuh kamu. ❤️`,
+`aku akan berusaha buat bahagiain kamu setiap hari 🥺`,
 
-`Kamu itu rumah paling nyaman yang pernah aku temuin.`,
+`aku akan buktiin ke orang tua kamu kalau aku serius sama kamu.`,
 
-`Aku harap kita bisa sama-sama terus sampai cerita kita jadi kenangan terindah.`,
+`aku gamau cuma jadi persinggahan, aku mau jadi tempat terakhir kamu 🤍`,
 
-`Jangan capek ya nemenin aku, karena aku juga gamau kehilangan kamu 🥺`,
+`setiap ada notif dari kamu, mood aku langsung balik lagi ✨`,
 
-`Setiap notif dari kamu selalu berhasil bikin mood aku balik
+`aku cuma mau kamu tetap ada di sini nemenin aku.`,
+
+`kamu itu rumah paling nyaman yang pernah aku temuin ❤️`,
+
+`aku harap kita bisa terus sama-sama sampai lama banget.`,
+
+`kalau dunia lagi jahat sama kamu, sini cerita ke aku ya.`,
+
+`aku bakal usahain jadi orang yang paling bikin kamu nyaman.`
+];
+
+function changeMessage(){
+    const text = document.getElementById("message");
+    const random = Math.floor(Math.random() * messages.length);
+
+    text.style.opacity = 0;
+
+    setTimeout(()=>{
+        text.innerHTML = messages[random];
+        text.style.opacity = 1;
+    },200);
+}
+
+/* hearts */
+function createHeart(){
+    const heart = document.createElement("div");
+
+    heart.classList.add("heart");
+    heart.innerHTML = "❤";
+
+    heart.style.left = Math.random()*100 + "vw";
+    heart.style.fontSize = (Math.random()*20 + 15) + "px";
+    heart.style.animationDuration = (Math.random()*5 + 5) + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(()=>{
+        heart.remove();
+    },10000);
+}
+
+setInterval(createHeart,250);
+
+/* stars */
+for(let i=0;i<120;i++){
+    const star = document.createElement("div");
+
+    star.classList.add("star");
+
+    star.style.left = Math.random()*100 + "vw";
+    star.style.top = Math.random()*100 + "vh";
+    star.style.animationDuration = (Math.random()*3 + 1) + "s";
+
+    document.body.appendChild(star);
+}
+</script>
+
+</body>
+</html>
