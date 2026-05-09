@@ -3,89 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>buat sasha</title>
+    <title>khusus buat sasha</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffeef2; /* warna pastel biar adem */
+            background-color: #ffeef2;
             font-family: sans-serif;
             overflow: hidden;
-        }
-
-        .container {
             text-align: center;
         }
 
-        #btnKangen {
-            padding: 15px 30px;
-            font-size: 18px;
-            background-color: #ff8fa3;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.4);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        #btnKangen:active {
-            transform: scale(0.9);
-        }
-
-        .pesan {
-            display: none;
-            animation: fadeIn 1s ease-in;
-        }
+        .container { padding: 20px; }
 
         h1 {
             color: #d63384;
-            font-size: 22px;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
         }
 
-        p {
-            color: #555;
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        button, .wa-link {
+            padding: 12px 25px;
             font-size: 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.2s;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        #btnMau { background-color: #ff8fa3; color: white; width: 200px; }
+
+        #btnEngga { background-color: #eee; color: #555; width: 150px; }
+
+        .wa-link {
+            background-color: #25d366;
+            color: white;
+            margin-top: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
         }
 
-        /* Dekorasi bunga simpel */
-        .flower {
-            font-size: 40px;
-            margin-bottom: 10px;
+        .pesan-akhir {
+            display: none;
+            animation: fadeIn 1s forwards;
         }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Tampilan Awal -->
-        <div id="tampilanAwal">
-            <button id="btnKangen" onclick="tampilkanPesan()">klik kalau kangen</button>
+        <div id="kontenUtama">
+            <h1 id="teksTanya">nanti calling-an bentar ya?</h1>
+            <div class="btn-group">
+                <button id="btnMau" onclick="tampilkanPesan()">mau</button>
+                <button id="btnEngga" onclick="mengecil()">engga</button>
+            </div>
         </div>
 
-        <!-- Tampilan Setelah Klik -->
-        <div id="pesanRahasia" class="pesan">
-            <div class="flower">🌸</div>
-            <h1>sama dong...</h1>
-            <p>ya udah, telepon sekarang ya?</p>
-            <p style="font-size: 12px; color: #aaa;">aku tungguin nih.</p>
+        <div id="pesanAkhir" class="pesan-akhir">
+            <h1 style="font-size: 40px;">🌸</h1>
+            <h1>asikkk, kabarin ya!</h1>
+            <p>aku tungguin suaranya sekarang.</p>
+            <!-- Nomor lo udah gw update di sini bro -->
+            <a href="https://wa.me/6285794728731?text=iyaa+ayo+calling-an" class="wa-link">klik buat ke wa aku</a>
         </div>
     </div>
 
     <script>
+        let skala = 1.0;
+        let klik = 0;
+
+        function mengecil() {
+            const btn = document.getElementById('btnEngga');
+            const teks = document.getElementById('teksTanya');
+            skala -= 0.15;
+            klik++;
+
+            if (skala < 0.2) {
+                btn.style.display = 'none';
+            } else {
+                btn.style.transform = `scale(${skala})`;
+            }
+
+            if (klik == 1) teks.innerText = "yakin? 🥹";
+            if (klik == 2) teks.innerText = "serius gak mau? 🥺";
+            if (klik >= 3) teks.innerText = "masa tega sih... 🥺👉👈";
+        }
+
         function tampilkanPesan() {
-            document.getElementById('tampilanAwal').style.display = 'none';
-            document.getElementById('pesanRahasia').style.display = 'block';
+            document.getElementById('kontenUtama').style.display = 'none';
+            document.getElementById('pesanAkhir').style.display = 'block';
         }
     </script>
 </body>
