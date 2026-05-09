@@ -110,7 +110,7 @@ body{
 
 /* card */
 .card{
-    width:370px;
+    width:380px;
     padding:42px 30px;
     border-radius:35px;
     background:rgba(255,255,255,.08);
@@ -181,6 +181,7 @@ body{
     line-height:1.9;
     margin-bottom:28px;
     transition:.3s;
+    min-height:120px;
 }
 
 .highlight{
@@ -231,8 +232,8 @@ button:hover{
 </div>
 
 <!-- music -->
-<audio id="bg-music" autoplay loop>
-    <source src="Rio Clappy - Bunga Abadi Official Lyric Video.mp3" type="audio/mp3">
+<audio id="bg-music" loop>
+    <source src="./Rio Clappy - Bunga Abadi Official Lyric Video.mp3" type="audio/mp3">
 </audio>
 
 <!-- card -->
@@ -255,31 +256,79 @@ button:hover{
 <script>
 
 /* autoplay music */
-document.addEventListener("click", () => {
-    document.getElementById("bg-music").play();
-}, { once:true });
+window.addEventListener("load", () => {
 
-/* text */
+    const music = document.getElementById("bg-music");
+
+    music.play().catch(() => {
+
+        document.body.addEventListener("click", () => {
+            music.play();
+        }, { once:true });
+
+    });
+
+});
+
+/* texts */
 const messages = [
+
 `aku sayang banget sama kamu ❤️`,
 
-`aku akan berusaha buat bahagiain kamu setiap hari 🥺`,
+`aku akan selalu berusaha bikin kamu bahagia walaupun aku banyak kurangnya 🥺`,
 
-`aku akan buktiin ke orang tua kamu kalau aku serius sama kamu.`,
+`aku mau jadi alasan kamu senyum tiap hari.`,
 
-`aku gamau cuma jadi persinggahan, aku mau jadi tempat terakhir kamu 🤍`,
+`aku akan buktiin ke orang tua kamu kalau aku serius sama kamu 🤍`,
 
-`setiap ada notif dari kamu, mood aku langsung balik lagi ✨`,
+`aku gamau jadi sekadar hadir, aku mau jadi rumah buat kamu.`,
 
-`aku cuma mau kamu tetap ada di sini nemenin aku.`,
+`aku mau nemenin kamu selama mungkin.`,
 
-`kamu itu rumah paling nyaman yang pernah aku temuin ❤️`,
+`aku harap kita ga cuma sementara.`,
 
-`aku harap kita bisa terus sama-sama sampai lama banget.`,
+`setiap notif dari kamu selalu bikin hati aku tenang ✨`,
+
+`aku nyaman banget sama kamu.`,
+
+`aku gamau kehilangan kamu.`,
 
 `kalau dunia lagi jahat sama kamu, sini cerita ke aku ya.`,
 
-`aku bakal usahain jadi orang yang paling bikin kamu nyaman.`
+`aku bakal selalu dengerin semua cerita kamu.`,
+
+`aku mau jadi tempat terakhir kamu pulang ❤️`,
+
+`aku bakal usahain jadi cowok terbaik buat kamu.`,
+
+`aku suka semua hal tentang kamu, bahkan hal kecil yang mungkin kamu ga sadar.`,
+
+`kalau aku bisa milih lagi, aku bakal tetap milih kamu.`,
+
+`aku cuma mau hubungan ini bertahan lama.`,
+
+`aku seneng banget waktu sama kamu.`,
+
+`kamu itu rumah paling nyaman yang pernah aku temuin.`,
+
+`aku harap kita bisa bareng terus sampai kapanpun 🤍`,
+
+`aku bakal jagain hati kamu sebisa aku.`,
+
+`aku ga janji jadi sempurna, tapi aku janji bakal serius sama kamu.`,
+
+`makasih ya udah hadir di hidup aku ❤️`,
+
+`aku beruntung banget bisa kenal kamu.`,
+
+`aku harap kamu ga bosen sama aku.`,
+
+`aku pengen selalu ada di samping kamu.`,
+
+`aku bakal bahagiain kamu pelan-pelan, satu per satu.`,
+
+`aku sayang kamu lebih dari yang bisa dijelasin kata-kata.`
+
 ];
 
 function changeMessage(){
@@ -305,7 +354,7 @@ setTimeout(() => {
     window.location.href =
     "https://wa.me/6285794728731?text=lucu%20tidak%20sayang";
 
-}, 20000);
+}, 25000);
 
 /* hearts */
 function createHeart(){
