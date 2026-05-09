@@ -49,6 +49,7 @@ body{
     color:#ff8fc5;
     animation:float 8s linear infinite;
     opacity:.7;
+    pointer-events:none;
 }
 
 @keyframes float{
@@ -80,6 +81,7 @@ body{
     position:relative;
     overflow:hidden;
     animation:show 1.3s ease;
+    z-index:2;
 }
 
 @keyframes show{
@@ -93,6 +95,7 @@ body{
     }
 }
 
+/* glowing border */
 .card::before{
     content:"";
     position:absolute;
@@ -106,6 +109,9 @@ body{
     -webkit-mask-composite:xor;
             mask-composite:exclude;
     animation:rotate 7s linear infinite;
+
+    /* FIX */
+    pointer-events:none;
 }
 
 @keyframes rotate{
@@ -134,7 +140,7 @@ body{
     font-size:16px;
     line-height:1.9;
     margin-bottom:28px;
-    animation:fade .5s ease;
+    transition:.3s;
 }
 
 .highlight{
@@ -153,22 +159,13 @@ button{
     cursor:pointer;
     transition:.35s;
     box-shadow:0 10px 25px rgba(255,91,168,.35);
+    position:relative;
+    z-index:10;
 }
 
 button:hover{
     transform:translateY(-3px) scale(1.04);
     box-shadow:0 15px 35px rgba(255,91,168,.5);
-}
-
-@keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(8px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
 }
 
 .music{
@@ -228,17 +225,17 @@ const messages = [
 
 function changeMessage(){
     const text = document.getElementById("message");
-    const random = Math.floor(Math.random() * messages.length);
 
-    text.style.opacity = 0;
+    text.style.opacity = "0";
 
-    setTimeout(()=>{
+    setTimeout(() => {
+        const random = Math.floor(Math.random() * messages.length);
         text.innerHTML = messages[random];
-        text.style.opacity = 1;
-    },200);
+        text.style.opacity = "1";
+    }, 200);
 }
 
-/* hearts */
+/* hearts animation */
 function createHeart(){
     const heart = document.createElement("div");
 
