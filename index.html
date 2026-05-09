@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>for you ❤️</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 *{
@@ -22,9 +22,9 @@ body{
     justify-content:center;
     align-items:center;
     background:
-    radial-gradient(circle at top left,#ff7eb6 0%,transparent 25%),
-    radial-gradient(circle at bottom right,#ffc2de 0%,transparent 25%),
-    linear-gradient(135deg,#130017,#2b0036,#4a005d);
+    radial-gradient(circle at top left,#ff7eb633 0%,transparent 25%),
+    radial-gradient(circle at bottom right,#ffc2de33 0%,transparent 25%),
+    linear-gradient(135deg,#0f0015,#24002f,#3b004c);
     position:relative;
 }
 
@@ -32,38 +32,69 @@ body{
 #intro{
     position:fixed;
     inset:0;
-    background:linear-gradient(135deg,#130017,#2b0036,#4a005d);
+    background:
+    radial-gradient(circle at top,#ff9acb22 0%,transparent 40%),
+    linear-gradient(135deg,#0f0015,#24002f,#3b004c);
     display:flex;
     justify-content:center;
     align-items:center;
     z-index:9999;
-    animation:fadeOut 2.5s forwards;
-    animation-delay:2.5s;
+    animation:introFade 2.5s forwards;
+    animation-delay:2.8s;
+    overflow:hidden;
+}
+
+#intro::before{
+    content:"";
+    position:absolute;
+    width:350px;
+    height:350px;
+    background:#ff6db6;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:.35;
+    animation:pulseGlow 4s infinite alternate;
 }
 
 #intro h1{
+    position:relative;
     color:white;
-    font-size:75px;
-    font-family:'Great Vibes',cursive;
+    font-size:58px;
+    font-weight:600;
+    letter-spacing:2px;
     text-shadow:
-    0 0 15px rgba(255,255,255,.8),
-    0 0 30px rgba(255,105,180,.9),
-    0 0 60px rgba(255,105,180,.6);
-    animation:zoomText 2s ease;
+    0 0 12px rgba(255,255,255,.55),
+    0 0 30px rgba(255,105,180,.45);
+    animation:introText 2s ease;
 }
 
-@keyframes zoomText{
+@keyframes introText{
     0%{
-        transform:scale(.5);
         opacity:0;
+        transform:translateY(25px) scale(.9);
+        letter-spacing:10px;
     }
+
     100%{
-        transform:scale(1);
         opacity:1;
+        transform:translateY(0) scale(1);
+        letter-spacing:2px;
     }
 }
 
-@keyframes fadeOut{
+@keyframes pulseGlow{
+    from{
+        transform:scale(1);
+        opacity:.25;
+    }
+
+    to{
+        transform:scale(1.2);
+        opacity:.4;
+    }
+}
+
+@keyframes introFade{
     to{
         opacity:0;
         visibility:hidden;
@@ -99,9 +130,11 @@ body{
         transform:translateY(100vh) scale(.5);
         opacity:0;
     }
+
     10%{
         opacity:1;
     }
+
     100%{
         transform:translateY(-120vh) scale(1.8);
         opacity:0;
@@ -114,11 +147,14 @@ body{
     padding:42px 30px;
     border-radius:35px;
     background:rgba(255,255,255,.08);
-    backdrop-filter:blur(14px);
-    border:1px solid rgba(255,255,255,.15);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.12);
+
     box-shadow:
-    0 0 35px rgba(255,105,180,.25),
-    0 0 70px rgba(255,105,180,.15);
+    0 0 25px rgba(255,105,180,.18),
+    0 0 70px rgba(255,105,180,.12),
+    inset 0 0 15px rgba(255,255,255,.05);
+
     text-align:center;
     position:relative;
     overflow:hidden;
@@ -131,6 +167,7 @@ body{
         opacity:0;
         transform:translateY(30px) scale(.95);
     }
+
     to{
         opacity:1;
         transform:translateY(0) scale(1);
@@ -144,13 +181,24 @@ body{
     inset:-2px;
     border-radius:35px;
     padding:2px;
-    background:linear-gradient(45deg,#ff5ba8,#ffffff,#ff9bcf,#ff5ba8);
+
+    background:linear-gradient(
+    45deg,
+    #ff5ba8,
+    #ffffff,
+    #ff9bcf,
+    #ff5ba8
+    );
+
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
+
     -webkit-mask-composite:xor;
             mask-composite:exclude;
+
     animation:rotate 7s linear infinite;
+
     pointer-events:none;
 }
 
@@ -160,12 +208,34 @@ body{
     }
 }
 
+/* title */
 .title{
-    font-family:'Great Vibes',cursive;
-    font-size:54px;
+    font-size:42px;
+    font-weight:600;
     color:white;
-    margin-bottom:8px;
-    text-shadow:0 0 18px rgba(255,255,255,.6);
+    margin-bottom:10px;
+    letter-spacing:1px;
+
+    text-shadow:
+    0 0 10px rgba(255,255,255,.4),
+    0 0 25px rgba(255,105,180,.35);
+
+    animation:titleGlow 3s infinite alternate;
+}
+
+@keyframes titleGlow{
+
+    from{
+        text-shadow:
+        0 0 10px rgba(255,255,255,.3),
+        0 0 25px rgba(255,105,180,.25);
+    }
+
+    to{
+        text-shadow:
+        0 0 18px rgba(255,255,255,.6),
+        0 0 40px rgba(255,105,180,.55);
+    }
 }
 
 .small{
@@ -193,20 +263,33 @@ button{
     border:none;
     padding:14px 30px;
     border-radius:40px;
-    background:linear-gradient(45deg,#ff5ba8,#ff9ccf);
+
+    background:linear-gradient(
+    45deg,
+    #ff5ba8,
+    #ff9ccf
+    );
+
     color:white;
     font-size:15px;
     font-weight:600;
     cursor:pointer;
     transition:.35s;
-    box-shadow:0 10px 25px rgba(255,91,168,.35);
+
+    box-shadow:
+    0 10px 25px rgba(255,91,168,.35),
+    0 0 20px rgba(255,91,168,.25);
+
     position:relative;
     z-index:10;
 }
 
 button:hover{
     transform:translateY(-3px) scale(1.04);
-    box-shadow:0 15px 35px rgba(255,91,168,.5);
+
+    box-shadow:
+    0 15px 35px rgba(255,91,168,.5),
+    0 0 30px rgba(255,91,168,.45);
 }
 
 .music{
@@ -219,16 +302,22 @@ button:hover{
 }
 
 @keyframes pulse{
-    0%,100%{transform:scale(1);}
-    50%{transform:scale(1.15);}
+    0%,100%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.15);
+    }
 }
 </style>
 </head>
+
 <body>
 
 <!-- intro -->
 <div id="intro">
-    <h1>i love you mosttttt ❤️</h1>
+    <h1>i love you mosttttt 🤍</h1>
 </div>
 
 <!-- music -->
@@ -242,6 +331,7 @@ button:hover{
     <div class="music">♫</div>
 
     <div class="title">for you</div>
+
     <div class="small">made with love</div>
 
     <div class="message" id="message">
@@ -249,7 +339,9 @@ button:hover{
         <span class="highlight">kamu</span> tetap jadi orang paling nyaman buat aku ❤️
     </div>
 
-    <button onclick="changeMessage()">klik ini ✨</button>
+    <button onclick="changeMessage()" id="mainButton">
+        klik ini ✨
+    </button>
 
 </div>
 
@@ -271,7 +363,7 @@ window.addEventListener("load", () => {
 });
 
 /* texts */
-const messages = [
+let messages = [
 
 `aku sayang banget sama kamu ❤️`,
 
@@ -335,26 +427,40 @@ function changeMessage(){
 
     const text = document.getElementById("message");
 
+    const button = document.getElementById("mainButton");
+
+    if(messages.length === 0){
+
+        text.innerHTML =
+        "aku bakal tetap sayang sama kamu selamanya ❤️";
+
+        button.innerHTML = "chat aku 🤍";
+
+        button.onclick = function(){
+
+            window.location.href =
+            "https://wa.me/6285794728731?text=%F0%9F%A4%8D";
+
+        };
+
+        return;
+    }
+
+    const random =
+    Math.floor(Math.random() * messages.length);
+
     text.style.opacity = "0";
 
     setTimeout(() => {
-
-        const random = Math.floor(Math.random() * messages.length);
 
         text.innerHTML = messages[random];
 
         text.style.opacity = "1";
 
-    }, 200);
+        messages.splice(random,1);
+
+    },200);
 }
-
-/* whatsapp redirect */
-setTimeout(() => {
-
-    window.location.href =
-    "https://wa.me/6285794728731?text=lucu%20tidak%20sayang";
-
-}, 25000);
 
 /* hearts */
 function createHeart(){
@@ -365,11 +471,14 @@ function createHeart(){
 
     heart.innerHTML = "❤";
 
-    heart.style.left = Math.random()*100 + "vw";
+    heart.style.left =
+    Math.random()*100 + "vw";
 
-    heart.style.fontSize = (Math.random()*20 + 15) + "px";
+    heart.style.fontSize =
+    (Math.random()*20 + 15) + "px";
 
-    heart.style.animationDuration = (Math.random()*5 + 5) + "s";
+    heart.style.animationDuration =
+    (Math.random()*5 + 5) + "s";
 
     document.body.appendChild(heart);
 
@@ -383,15 +492,19 @@ setInterval(createHeart,250);
 /* stars */
 for(let i=0;i<120;i++){
 
-    const star = document.createElement("div");
+    const star =
+    document.createElement("div");
 
     star.classList.add("star");
 
-    star.style.left = Math.random()*100 + "vw";
+    star.style.left =
+    Math.random()*100 + "vw";
 
-    star.style.top = Math.random()*100 + "vh";
+    star.style.top =
+    Math.random()*100 + "vh";
 
-    star.style.animationDuration = (Math.random()*3 + 1) + "s";
+    star.style.animationDuration =
+    (Math.random()*3 + 1) + "s";
 
     document.body.appendChild(star);
 }
