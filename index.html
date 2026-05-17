@@ -83,9 +83,41 @@
             transform: translateY(0);
         }
 
+        /* Layar PIN */
+        #pin-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .pin-title { font-size: 18px; font-weight: 700; color: #c2185b; margin-bottom: 20px; }
+        .pin-input {
+            width: 80%;
+            padding: 12px;
+            border: 2px solid #ff758c;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            color: #d81b60;
+            outline: none;
+            background: rgba(255,255,255,0.7);
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+        .pin-input:focus { background: #fff; box-shadow: 0 0 10px rgba(255, 117, 140, 0.5); }
+        .pin-hint-text {
+            color: #d81b60;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 15px;
+            display: none;
+            animation: blink 1s infinite;
+        }
+
         /* Tampilan Awal: Kado */
         #step1 {
-            display: flex;
+            display: none; /* disembunyiin sampai pin bener */
             flex-direction: column;
             align-items: center;
         }
@@ -101,7 +133,7 @@
         }
         .gift-box {
             font-size: 80px;
-            animation: shake 2.5s infinite;
+            animation: floatGift 2.5s infinite;
             transition: transform 0.3s;
         }
         .gift-wrapper:active .gift-box { transform: scale(0.85); }
@@ -205,9 +237,13 @@
             font-size: 15px;
             font-weight: 700;
             box-shadow: 0 6px 15px rgba(255, 117, 140, 0.4);
+            border: none;
+            cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            font-family: 'Quicksand', sans-serif;
+            margin-top: 20px;
         }
         .wa-btn::before {
             content: '';
@@ -223,10 +259,15 @@
         /* Keyframes */
         @keyframes beat { 0% { transform: scale(1); } 100% { transform: scale(1.3); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes shake {
+        @keyframes floatGift {
             0%, 100% { transform: translateX(0) rotate(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-4px) rotate(-3deg); }
-            20%, 40%, 60%, 80% { transform: translateX(4px) rotate(3deg); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px) rotate(-2deg); }
+            20%, 40%, 60%, 80% { transform: translateX(2px) rotate(2deg); }
+        }
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
         }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -245,6 +286,13 @@
 
     <div class="container" id="main-container">
         
+        <div id="pin-step">
+            <div class="pin-title">masukin pin dulu ya 🔒</div>
+            <input type="number" id="input-pin" class="pin-input" placeholder="xxxxxx" inputmode="numeric">
+            <button class="wa-btn" onclick="cekPin()">buka</button>
+            <div id="pin-hint" class="pin-hint-text">coba tanggal jadian kita</div>
+        </div>
+
         <div id="step1">
             <div class="gift-wrapper" onclick="bukaKado()">
                 <div class="gift-box">🎁</div>
@@ -283,7 +331,6 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Kunang-kunang di background
         class Firefly {
             constructor() {
                 this.x = Math.random() * width;
@@ -307,7 +354,6 @@
             }
         }
 
-        // Partikel Love pas diklik
         class Particle {
             constructor(x, y) {
                 this.x = x;
@@ -339,11 +385,90 @@
 
         function animateCanvas() {
             ctx.clearRect(0, 0, width, height);
-            
             fireflies.forEach(f => { f.update(); f.draw(); });
-            
             for(let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update();
                 particles[i].draw();
-                if(particles[i].life <=
-        
+                if(particles[i].life <= 0) particles.splice(i, 1);
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        function createExplosion(x, y) {
+            for(let i=0; i<8; i++) particles.push(new Particle(x, y));
+        }
+        canvas.addEventListener('click', (e) => createExplosion(e.clientX, e.clientY));
+        canvas.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            createExplosion(touch.clientX, touch.clientY);
+        });
+
+        /* === LOGIKA WEB (LOADING, PIN, KADO) === */
+        const pesan = "akhirnya mendarat juga di zona nyaman. hari ini kerasa panjang banget ya? sekarang waktunya lepasin semua capeknya. mandi pakai air hangat, minum yang manis, terus rebahan... dan asal kamu tau, aku kangen banget sama kamu.";
+        let charIndex = 0;
+        const typingSpeed = 50; 
+
+        window.onload = () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loading-screen');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    document.getElementById('main-container').classList.add('show');
+                }, 1000);
+            }, 2000);
+        };
+
+        // Fungsi Cek PIN
+        function cekPin() {
+            const pinVal = document.getElementById('input-pin').value;
+            const inputField = document.getElementById('input-pin');
+            const hint = document.getElementById('pin-hint');
+
+            if (pinVal === '18042025') {
+                document.getElementById('pin-step').style.display = 'none';
+                document.getElementById('step1').style.display = 'flex';
+                createExplosion(window.innerWidth/2, window.innerHeight/2);
+                if (navigator.vibrate) navigator.vibrate(50);
+            } else {
+                // Kalo salah
+                hint.style.display = 'block';
+                inputField.style.animation = 'none';
+                void inputField.offsetWidth; // trigger reflow
+                inputField.style.animation = 'shakeError 0.4s';
+                inputField.value = ''; // kosongin input
+                if (navigator.vibrate) navigator.vibrate([50, 50, 50]); // getar tanda salah
+            }
+        }
+
+        // Efek ketik perlahan
+        function typeWriter() {
+            if (charIndex < pesan.length) {
+                document.getElementById("text-typing").innerHTML += pesan.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, typingSpeed);
+            } else {
+                document.getElementById("text-typing").classList.remove('typing');
+                setTimeout(() => {
+                    const finalElements = document.getElementById('final-elements');
+                    finalElements.style.display = 'block';
+                    void finalElements.offsetWidth; 
+                    finalElements.classList.add('show');
+                }, 400);
+            }
+        }
+
+        // Fungsi saat kado ditekan
+        function bukaKado() {
+            createExplosion(window.innerWidth/2, window.innerHeight/2); 
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
+            
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            
+            setTimeout(typeWriter, 400);
+        }
+    </script>
+</body>
+</html>
