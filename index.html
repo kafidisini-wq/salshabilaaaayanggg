@@ -4,85 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>buat salshabila</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            margin: 0; padding: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(to bottom, #fbc2eb, #e6dee9);
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
             font-family: 'Quicksand', sans-serif;
             overflow: hidden; 
             text-align: center;
-            color: #555;
+            color: #444;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Efek Kelopak Bunga Jatuh */
-        .petal {
+        /* Canvas Interaktif di Background */
+        #interactive-canvas {
             position: absolute;
-            background-color: #ffb6c1;
-            border-radius: 15px 0 15px 0;
-            opacity: 0.6;
-            animation: fall linear infinite;
-            z-index: 0;
-        }
-        @keyframes fall {
-            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.8; }
-            100% { top: 110%; transform: translateX(50px) rotate(360deg); opacity: 0; }
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: auto;
         }
 
+        /* Loading Screen */
+        #loading-screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #ffe3e8;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+        .loader-heart {
+            color: #d81b60;
+            font-size: 50px;
+            animation: beat 1s infinite alternate;
+        }
+        .loader-text {
+            margin-top: 20px;
+            font-weight: 700;
+            color: #d81b60;
+            letter-spacing: 2px;
+            font-size: 14px;
+            animation: blink 1.5s infinite;
+        }
+
+        /* Main Container (Glassmorphism) */
         .container {
             position: relative;
             z-index: 10;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             padding: 40px 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             width: 90%;
-            max-width: 400px;
-            backdrop-filter: blur(5px);
+            max-width: 420px;
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+        }
+        .container.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        /* Tampilan Awal */
+        /* Tampilan Awal: Kado */
         #step1 {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+        .gift-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
         .gift-box {
             font-size: 80px;
-            cursor: pointer;
-            animation: bounce 2s infinite;
-            margin-bottom: 20px;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            animation: shake 2.5s infinite;
+            transition: transform 0.3s;
         }
-        .gift-box:active { transform: scale(0.9); }
-        .hint-text { font-size: 16px; font-weight: 700; color: #d81b60; letter-spacing: 0.5px; }
+        .gift-wrapper:active .gift-box { transform: scale(0.85); }
+        .tap-hint {
+            position: absolute;
+            bottom: -10px;
+            background: #d81b60;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            animation: float 2s infinite;
+        }
+        .intro-text { font-size: 16px; font-weight: 700; color: #c2185b; }
 
         /* Tampilan Pesan */
         #step2 { display: none; }
         
         .typing-container {
-            min-height: 80px;
-            margin-bottom: 20px;
+            min-height: 120px;
+            margin-bottom: 25px;
             font-size: 16px;
-            line-height: 1.6;
-            color: #444;
+            line-height: 1.7;
+            color: #333;
             font-weight: 500;
             text-align: left;
+            position: relative;
         }
+        .typing-container::after {
+            content: '|';
+            position: absolute;
+            right: -10px;
+            bottom: 0;
+            animation: blink 0.7s infinite;
+            color: #d81b60;
+            display: none;
+        }
+        .typing-container.typing::after { display: inline-block; }
 
-        /* Elemen Akhir (Foto & Tombol) */
+        /* Elemen Final */
         #final-elements {
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 1s ease;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: none;
         }
         #final-elements.show {
@@ -91,64 +155,106 @@
             display: block;
         }
 
-        /* Gaya Polaroid */
+        /* Polaroid Polaroid */
         .polaroid {
-            background: white;
-            padding: 10px 10px 25px 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: #fff;
+            padding: 12px 12px 35px 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             display: inline-block;
-            transform: rotate(-3deg);
-            margin-bottom: 20px;
+            transform: rotate(-4deg);
+            margin-bottom: 25px;
+            border-radius: 4px;
+            transition: transform 0.4s ease;
         }
+        .polaroid:hover { transform: rotate(0deg) scale(1.05); }
         .polaroid img {
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             object-fit: cover;
-            background-color: #eee;
+            background-color: #f0f0f0;
+            border-radius: 2px;
         }
         .polaroid-text {
-            font-size: 14px;
+            font-size: 15px;
             color: #d81b60;
             font-weight: 700;
-            margin-top: 10px;
-            display: block;
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
         }
 
-        .kafi-text { font-size: 16px; font-weight: 700; color: #d81b60; margin-bottom: 20px; }
+        .kafi-text { 
+            font-size: 17px; 
+            font-weight: 700; 
+            color: #c2185b; 
+            margin-bottom: 25px; 
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
 
         .wa-btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: #f48fb1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            background: linear-gradient(45deg, #ff758c, #ff7eb3);
             color: #fff;
             text-decoration: none;
-            border-radius: 25px;
-            font-size: 14px;
+            border-radius: 30px;
+            font-size: 15px;
             font-weight: 700;
-            box-shadow: 0 4px 10px rgba(244, 143, 177, 0.4);
-            transition: 0.3s;
+            box-shadow: 0 6px 15px rgba(255, 117, 140, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .wa-btn:hover { background: #d81b60; transform: scale(1.05); }
+        .wa-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        .wa-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 117, 140, 0.6); }
+        .wa-btn:hover::before { left: 100%; }
 
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-15px); }
-            60% { transform: translateY(-7px); }
+        /* Keyframes */
+        @keyframes beat { 0% { transform: scale(1); } 100% { transform: scale(1.3); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-4px) rotate(-3deg); }
+            20%, 40%, 60%, 80% { transform: translateX(4px) rotate(3deg); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
     </style>
 </head>
 <body>
 
-    <div id="bg-petals"></div>
+    <div id="loading-screen">
+        <div class="loader-heart">❤</div>
+        <div class="loader-text">menyiapkan sesuatu buat salshabila...</div>
+    </div>
 
-    <div class="container">
+    <canvas id="interactive-canvas"></canvas>
+
+    <div class="container" id="main-container">
+        
         <div id="step1">
-            <div class="gift-box" onclick="bukaKado()">🎁</div>
-            <div class="hint-text">ada sesuatu buat kamu.</div>
+            <div class="gift-wrapper" onclick="bukaKado()">
+                <div class="gift-box">🎁</div>
+                <div class="tap-hint">tap aku</div>
+            </div>
+            <div class="intro-text">ada paket spesial nih.</div>
         </div>
 
         <div id="step2">
-            <div class="typing-container" id="text-typing"></div>
+            <div class="typing-container typing" id="text-typing"></div>
             
             <div id="final-elements">
                 <div class="polaroid">
@@ -159,55 +265,85 @@
                 <a href="https://wa.me/6285794728731?text=aku%20kangen%20kamu%20sayang" class="wa-btn">kalo click ini kamu kangen aku</a>
             </div>
         </div>
+
     </div>
 
     <script>
-        // Bikin hujan kelopak bunga
-        function createPetals() {
-            const bg = document.getElementById('bg-petals');
-            for(let i = 0; i < 20; i++) {
-                let petal = document.createElement('div');
-                petal.className = 'petal';
-                petal.style.left = Math.random() * 100 + 'vw';
-                petal.style.width = (Math.random() * 10 + 10) + 'px';
-                petal.style.height = (Math.random() * 10 + 10) + 'px';
-                petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
-                petal.style.animationDelay = Math.random() * 5 + 's';
-                bg.appendChild(petal);
+        /* === SISTEM PARTIKEL CANVAS (BACKGROUND & EFEK KLIK) === */
+        const canvas = document.getElementById('interactive-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let fireflies = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Kunang-kunang di background
+        class Firefly {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if(this.x < 0 || this.x > width) this.speedX *= -1;
+                if(this.y < 0 || this.y > height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
             }
         }
 
-        // Teks yang bakal diketik pelan-pelan
-        const pesan = "akhirnya mendarat juga di zona nyaman. hari ini kerasa panjang banget ya? sekarang waktunya lepasin semua capeknya. mandi pakai air hangat, minum yang manis, terus rebahan...";
-        let i = 0;
-        const speed = 60; // kecepatan ngetik (ms)
-
-        function typeWriter() {
-            if (i < pesan.length) {
-                document.getElementById("text-typing").innerHTML += pesan.charAt(i);
-                i++;
-                setTimeout(typeWriter, speed);
-            } else {
-                // Kalau teks udah selesai diketik, munculin foto dan tombol
-                setTimeout(() => {
-                    const finalElements = document.getElementById('final-elements');
-                    finalElements.style.display = 'block';
-                    setTimeout(() => finalElements.classList.add('show'), 50);
-                }, 500);
+        // Partikel Love pas diklik
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 15 + 10;
+                this.speedX = Math.random() * 6 - 3;
+                this.speedY = Math.random() * -6 - 2;
+                this.gravity = 0.1;
+                this.life = 1;
+                this.color = ['#ff758c', '#ff7eb3', '#ffffff'][Math.floor(Math.random() * 3)];
+            }
+            update() {
+                this.x += this.speedX;
+                this.speedY += this.gravity;
+                this.y += this.speedY;
+                this.life -= 0.02;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.life);
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillStyle = this.color;
+                ctx.fillText('❤', this.x, this.y);
+                ctx.restore();
             }
         }
 
-        function bukaKado() {
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('step2').style.display = 'block';
-            
-            if (navigator.vibrate) navigator.vibrate(100);
-            
-            // Mulai ngetik pas kado dibuka
-            setTimeout(typeWriter, 300);
-        }
+        for(let i=0; i<40; i++) fireflies.push(new Firefly());
 
-        window.onload = createPetals;
-    </script>
-</body>
-</html>
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            
+            fireflies.forEach(f => { f.update(); f.draw(); });
+            
+            for(let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if(particles[i].life <=
+        
