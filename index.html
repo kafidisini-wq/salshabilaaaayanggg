@@ -3,410 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>buat salshabila</title>
+    <title>sunshine for nur salshabila</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body, html {
             width: 100%; height: 100%;
-            background-color: #0b0c10;
+            background-color: #0d1117; /* Warna gelap subuh */
             font-family: 'Quicksand', sans-serif;
             overflow: hidden; 
             color: #fff;
+            transition: background 0.5s linear;
         }
 
-        /* --- BACKGROUND PARALLAX STARS --- */
-        #star-container {
-            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle at center, #1f2833 0%, #0b0c10 100%);
-            z-index: 0; transition: transform 0.1s ease-out;
+        /* --- HARDWARE ACCELERATED STARS --- */
+        #star-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
         }
-        canvas { display: block; position: absolute; top: 0; left: 0; }
-        #particle-canvas { z-index: 1; pointer-events: none; }
 
         /* --- STAGE MANAGER --- */
         .stage {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none; z-index: 10;
-            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 1s ease, transform 1s ease;
         }
         .stage.active { opacity: 1; pointer-events: auto; }
 
-        /* --- STAGE 1: SCANNER --- */
-        .scan-ring {
-            width: 120px; height: 120px; border-radius: 50%;
-            border: 2px dashed #66fcf1;
-            position: relative; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 20px rgba(102, 252, 241, 0.2);
-            animation: rotateRing 10s linear infinite;
-            cursor: pointer;
+        /* --- TAHAP 1: MATAHARI TERBIT (HOLD INTERACTION) --- */
+        .dawn-title {
+            font-size: 16px; font-weight: 700; color: #58a6ff;
+            letter-spacing: 2px; margin-bottom: 50px; text-align: center;
         }
-        .scan-ring::before {
-            content: ''; position: absolute; width: 80px; height: 80px;
-            border-radius: 50%; background: rgba(102, 252, 241, 0.1);
-            animation: pulseGlow 2s infinite alternate;
-        }
-        .scan-icon { font-size: 35px; position: absolute; z-index: 2; animation: none; transform: rotate(0deg) !important; }
-        /* Memastikan icon tidak ikut berputar dengan ring */
-        .scan-core { position: absolute; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; z-index: 5; }
         
-        .scan-text {
-            margin-top: 40px; font-size: 14px; font-weight: 700;
-            letter-spacing: 3px; color: #45a29e;
-            animation: blinkText 1.5s infinite;
+        /* Titik cahaya pusat */
+        .core-light {
+            width: 20px; height: 20px;
+            background: #fff; border-radius: 50%;
+            box-shadow: 0 0 15px #fff, 0 0 30px #fff;
+            position: relative; cursor: pointer;
+            touch-action: none; transition: transform 0.2s ease;
+        }
+        .core-light::after {
+            content: ''; position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px;
+            border-radius: 50%; background: rgba(255,255,255,0.1);
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+        .core-light:active { transform: scale(0.9); }
+        
+        .hold-hint {
+            margin-top: 30px; font-size: 13px; color: #8b949e;
+            animation: blink 1.5s infinite;
         }
 
-        /* --- STAGE 2: CINEMATIC TYPING --- */
-        .cinema-box {
-            width: 85%; max-width: 400px;
-            background: rgba(31, 40, 51, 0.6);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(102, 252, 241, 0.2);
-            padding: 40px 30px; border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            transform: translateY(20px); transition: 1s;
-        }
-        .stage.active .cinema-box { transform: translateY(0); }
-        .typing-text {
-            min-height: 140px; font-size: 16px; line-height: 1.8;
-            color: #c5c6c7; font-weight: 500; text-align: left;
-        }
-        .typing-text span {
-            text-shadow: 0 0 5px rgba(102,252,241,0.5);
-            color: #66fcf1; font-weight: 700;
-        }
-        .btn-continue {
-            margin-top: 30px; padding: 12px 25px;
-            background: transparent; border: 1px solid #66fcf1;
-            color: #66fcf1; border-radius: 30px; font-family: 'Quicksand';
-            font-size: 14px; font-weight: 700; cursor: pointer;
-            opacity: 0; transition: all 0.3s; pointer-events: none;
-        }
-        .btn-continue.show { opacity: 1; pointer-events: auto; }
-        .btn-continue:active { background: #66fcf1; color: #0b0c10; }
-
-        /* --- STAGE 3: FROSTED GLASS REVEAL --- */
-        .photo-wrapper {
-            position: relative; width: 220px; height: 300px;
-            border-radius: 15px; overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(102, 252, 241, 0.3);
-            border: 2px solid rgba(102, 252, 241, 0.4);
-        }
-        .photo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        #frost-canvas {
+        /* --- TAHAP 2: TYPING & REVEAL --- */
+        #stage-2 { background: #fff; color: #333; display: none; }
+        
+        /* Efek silau/flash putih */
+        .flash {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 5; touch-action: none; cursor: grab;
+            background: #fff; z-index: 100; opacity: 0; pointer-events: none;
         }
-        .wipe-hint {
-            position: absolute; top: -40px; left: 0; width: 100%;
-            text-align: center; color: #66fcf1; font-size: 14px; font-weight: 700;
-            animation: bounceY 2s infinite; z-index: 10;
+        
+        .sun-reveal-wrapper {
+            position: relative; width: 200px; height: 200px;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 40px; margin-top: -30px;
         }
-        .final-name {
-            margin-top: 30px; font-size: 22px; font-weight: 700;
-            color: #fff; text-shadow: 0 0 10px #66fcf1;
-            letter-spacing: 2px; opacity: 0; transform: translateY(10px);
-            transition: all 1.5s ease;
+        
+        /* Foto frame matahari */
+        .sun-frame {
+            width: 150px; height: 150px;
+            border-radius: 50%; border: 6px solid #ffca28;
+            object-fit: cover;
+            box-shadow: 0 0 30px #ffca28, 0 0 60px #ff9800;
+            z-index: 5;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0);
         }
-        .final-sign {
-            margin-top: 10px; font-size: 16px; font-weight: 500;
-            color: #45a29e; opacity: 0; transform: translateY(10px);
-            transition: all 1.5s ease 0.5s;
-        }
-        .stage.active .revealed { opacity: 1; transform: translateY(0); }
+        .stage.active .sun-frame { transform: scale(1); }
 
-        /* --- KEYFRAMES --- */
-        @keyframes rotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes pulseGlow { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 1; } }
-        @keyframes blinkText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        @keyframes bounceY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* Sinar Matahari melingkar */
+        .sun-rays {
+            position: absolute; width: 220px; height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,202,40,0.3) 0%, rgba(255,152,0,0) 70%);
+            animation: raysRotate 8s linear infinite; z-index: 1;
+        }
+
+        .typing-box {
+            width: 85%; max-width: 380px;
+            text-align: left; font-size: 16px; line-height: 1.8;
+            color: #555; font-weight: 500; min-height: 120px;
+        }
+        .typing-box span { color: #f57c00; font-weight: 700; text-shadow: 0 0 5px rgba(245,124,0,0.2); }
+
+        .kafi-sign {
+            margin-top: 30px; font-size: 18px; font-weight: 700;
+            color: #f57c00; opacity: 0; transition: opacity 1s ease 1s;
+        }
+        
+        /* Particle canvas buat efek sunshine */
+        #shine-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+
+        /* KEYFRAMES */
+        @keyframes pulseGlow { 0% { transform: scale(0.9); opacity: 0.5; } 100% { transform: scale(1.3); opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes raysRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes flashEffect { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div id="star-container">
-        <canvas id="stars-canvas"></canvas>
-    </div>
+    <canvas id="star-canvas"></canvas>
     
-    <canvas id="particle-canvas"></canvas>
+    <canvas id="shine-canvas"></canvas>
+    
+    <div class="flash" id="flash-overlay"></div>
 
     <div id="stage-1" class="stage active">
-        <div class="scan-core" id="scan-btn">
-            <div class="scan-icon">👆</div>
-        </div>
-        <div class="scan-ring"></div>
-        <div class="scan-text" id="scan-hint">TAHAN LAYAR UNTUK DEKRIPSI</div>
+        <div class="dawn-title">fajar sedang menunggu...</div>
+        <div class="core-light" id="light-btn"></div>
+        <div class="hold-hint">tahan jarimu di cahaya buat terbitin matahari</div>
     </div>
 
     <div id="stage-2" class="stage">
-        <div class="cinema-box">
-            <div class="typing-text" id="typewriter"></div>
-            <button class="btn-continue" id="btn-next" onclick="goToStage3()">buka pesan rahasia</button>
+        <div class="sun-reveal-wrapper">
+            <div class="sun-rays"></div>
+            <img src="sasha.jpg" alt="salshabila" class="sun-frame" id="sasha-photo">
         </div>
-    </div>
-
-    <div id="stage-3" class="stage">
-        <div class="photo-wrapper">
-            <div class="wipe-hint" id="wipe-hint">usap embunnya pakai jari ✨</div>
-            <img src="sasha.jpg" alt="salshabila" id="sasha-img">
-            <canvas id="frost-canvas"></canvas>
-        </div>
-        <div class="final-name" id="f-name">nur salshabila</div>
-        <div class="final-sign" id="f-sign">istirahat bareng kafi ya 🤍</div>
+        
+        <div class="typing-box" id="teks-ngetik"></div>
+        <div class="kafi-sign" id="kafi-text">istirahat bareng kafi ya 🤍</div>
     </div>
 
     <script>
-        /* =========================================
-           1. MASTER PARALLAX STARS & GYROSCOPE
-           ========================================= */
-        const starCanvas = document.getElementById('stars-canvas');
+        /* === KANVAS BINTANG & PARTIKEL === */
+        const starCanvas = document.getElementById('star-canvas');
         const starCtx = starCanvas.getContext('2d');
-        let sw = starCanvas.width = window.innerWidth * 2;
-        let sh = starCanvas.height = window.innerHeight * 2;
-        let stars = [];
-
-        for(let i=0; i<200; i++) {
-            stars.push({
-                x: Math.random() * sw, y: Math.random() * sh,
-                r: Math.random() * 1.5,
-                alpha: Math.random(),
-                speed: Math.random() * 0.05
-            });
+        const shineCanvas = document.getElementById('shine-canvas');
+        const shineCtx = shineCanvas.getContext('2d');
+        
+        let w, h; let stars = []; let shinies = [];
+        
+        function resize() {
+            w = starCanvas.width = shineCanvas.width = window.innerWidth;
+            h = starCanvas.height = shineCanvas.height = window.innerHeight;
         }
-
+        window.addEventListener('resize', resize); resize();
+        
+        // Init Stars (Tahap 1)
+        for(let i=0; i<150; i++) {
+            stars.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.2, alpha: Math.random(), speed: Math.random()*0.02 });
+        }
+        
         function drawStars() {
-            starCtx.clearRect(0,0,sw,sh);
+            starCtx.clearRect(0,0,w,h);
             starCtx.fillStyle = "#fff";
             stars.forEach(s => {
                 s.alpha += s.speed;
                 if(s.alpha > 1 || s.alpha < 0) s.speed *= -1;
                 starCtx.globalAlpha = Math.abs(s.alpha);
-                starCtx.beginPath();
-                starCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-                starCtx.fill();
+                starCtx.beginPath(); starCtx.arc(s.x, s.y, s.r, 0, Math.PI*2); starCtx.fill();
             });
             requestAnimationFrame(drawStars);
         }
         drawStars();
 
-        // Parallax Effect based on Device Orientation (Gyroscope for HP)
-        const starContainer = document.getElementById('star-container');
-        window.addEventListener('deviceorientation', (e) => {
-            let x = e.gamma; // tilt left/right
-            let y = e.beta;  // tilt front/back
-            // Limit the tilt range
-            if(x > 30) x = 30; if(x < -30) x = -30;
-            if(y > 30) y = 30; if(y < -30) y = -30;
-            
-            // Apply translation to the container smoothly
-            starContainer.style.transform = `translate(${x * -1}px, ${y * -1}px)`;
-        });
-        // Fallback for desktop mouse
-        document.addEventListener('mousemove', (e) => {
-            let x = (window.innerWidth / 2 - e.pageX) / 10;
-            let y = (window.innerHeight / 2 - e.pageY) / 10;
-            starContainer.style.transform = `translate(${x}px, ${y}px)`;
-        });
-
-
-        /* =========================================
-           2. STAGE 1: SCANNER HOLD LOGIC
-           ========================================= */
-        let scanTimer;
-        let isScanning = false;
-        const scanBtn = document.getElementById('scan-btn');
-        const scanHint = document.getElementById('scan-hint');
-        
-        function startScan(e) {
-            if(e) e.preventDefault();
-            isScanning = true;
-            scanHint.innerText = "MENYINKRONKAN... JANGAN LEPAS";
-            scanHint.style.color = "#66fcf1";
-            if(navigator.vibrate) navigator.vibrate(50);
-            
-            scanTimer = setTimeout(() => {
-                if(isScanning) {
-                    if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
-                    document.getElementById('stage-1').classList.remove('active');
-                    setTimeout(() => {
-                        document.getElementById('stage-2').classList.add('active');
-                        startCinematicTyping();
-                    }, 1000);
-                }
-            }, 2500); // Harus ditahan 2.5 detik
-        }
-        
-        function stopScan() {
-            isScanning = false;
-            clearTimeout(scanTimer);
-            scanHint.innerText = "TAHAN LAYAR UNTUK DEKRIPSI";
-            scanHint.style.color = "#45a29e";
-        }
-
-        scanBtn.addEventListener('touchstart', startScan);
-        scanBtn.addEventListener('touchend', stopScan);
-        scanBtn.addEventListener('mousedown', startScan);
-        scanBtn.addEventListener('mouseup', stopScan);
-
-
-        /* =========================================
-           3. STAGE 2: CINEMATIC TYPING
-           ========================================= */
-        const textToType = "akhirnya mendarat juga di zona nyaman. hari ini kerasa panjang banget ya? sekarang waktunya lepasin semua capeknya. bersihin badan, ganti baju yang nyaman, terus rebahan. dan asal kamu tau, aku kangen banget sama kamu.";
-        let typeIndex = 0;
-        const typeContainer = document.getElementById('typewriter');
-
-        function startCinematicTyping() {
-            if (typeIndex < textToType.length) {
-                let char = textToType.charAt(typeIndex);
-                // Highlight kata 'kangen' biar dramatis
-                if(textToType.substring(typeIndex, typeIndex+6) === "kangen") {
-                    typeContainer.innerHTML += "<span>kangen</span>";
-                    typeIndex += 6;
-                } else {
-                    typeContainer.innerHTML += char;
-                    typeIndex++;
-                }
-                setTimeout(startCinematicTyping, 60);
-            } else {
-                setTimeout(() => {
-                    document.getElementById('btn-next').classList.add('show');
-                }, 800);
-            }
-        }
-
-        function goToStage3() {
-            if(navigator.vibrate) navigator.vibrate(50);
-            document.getElementById('stage-2').classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('stage-3').classList.add('active');
-                initFrost();
-            }, 1000);
-        }
-
-
-        /* =========================================
-           4. STAGE 3: FROSTED GLASS REVEAL (MASTER CANVAS)
-           ========================================= */
-        const fCanvas = document.getElementById('frost-canvas');
-        const fCtx = fCanvas.getContext('2d');
-        let isWiping = false;
-        let wipedPixels = 0;
-        let totalWipeArea = 0;
-        let revealTriggered = false;
-
-        function initFrost() {
-            fCanvas.width = fCanvas.offsetWidth;
-            fCanvas.height = fCanvas.offsetHeight;
-            
-            // Draw frosted glass effect
-            fCtx.fillStyle = "rgba(180, 200, 220, 0.98)";
-            fCtx.fillRect(0, 0, fCanvas.width, fCanvas.height);
-            
-            // Add some "ice crystals" texture
-            for(let i=0; i<300; i++) {
-                fCtx.fillStyle = `rgba(255,255,255,${Math.random()*0.5})`;
-                fCtx.beginPath();
-                fCtx.arc(Math.random()*fCanvas.width, Math.random()*fCanvas.height, Math.random()*2, 0, Math.PI*2);
-                fCtx.fill();
-            }
-
-            fCtx.lineJoin = "round";
-            fCtx.lineCap = "round";
-            fCtx.lineWidth = 35; // Ukuran jari usap
-            fCtx.globalCompositeOperation = "destination-out";
-            totalWipeArea = (fCanvas.width * fCanvas.height) / (35 * 35);
-        }
-
-        function wipe(e) {
-            if(!isWiping || revealTriggered) return;
-            e.preventDefault();
-            let rect = fCanvas.getBoundingClientRect();
-            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-            
-            fCtx.lineTo(x, y);
-            fCtx.stroke();
-            wipedPixels++;
-
-            // Jika digosok cukup banyak
-            if(wipedPixels > 60 && !revealTriggered) {
-                revealTriggered = true;
-                document.getElementById('wipe-hint').style.display = 'none';
-                
-                // Fade out the remaining frost
-                fCanvas.style.transition = "opacity 1.5s ease";
-                fCanvas.style.opacity = "0";
-                
-                if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                
-                // Show final text and launch particles
-                setTimeout(() => {
-                    document.getElementById('f-name').classList.add('revealed');
-                    document.getElementById('f-sign').classList.add('revealed');
-                    fCanvas.style.display = "none";
-                    launchMagicParticles();
-                }, 500);
-            }
-        }
-
-        fCanvas.addEventListener('mousedown', (e) => { isWiping = true; let rect = fCanvas.getBoundingClientRect(); fCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top); });
-        fCanvas.addEventListener('mousemove', wipe);
-        fCanvas.addEventListener('mouseup', () => isWiping = false);
-        
-        fCanvas.addEventListener('touchstart', (e) => { isWiping = true; let rect = fCanvas.getBoundingClientRect(); fCtx.moveTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top); });
-        fCanvas.addEventListener('touchmove', wipe);
-        fCanvas.addEventListener('touchend', () => isWiping = false);
-
-
-        /* =========================================
-           5. MAGIC PARTICLES SYSTEM (AKHIR)
-           ========================================= */
-        const pCanvas = document.getElementById('particle-canvas');
-        const pCtx = pCanvas.getContext('2d');
-        let pw, ph;
-        let magicParticles = [];
-
-        function resizePCanvas() {
-            pw = pCanvas.width = window.innerWidth;
-            ph = pCanvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizePCanvas);
-        resizePCanvas();
-
-        function launchMagicParticles() {
-            for(let i=0; i<100; i++) {
-                magicParticles.push({
-                    x: pw/2, y: ph/2 + 50,
-                    vx: (Math.random() - 0.5) * 10,
-                    vy: (Math.random() - 0.5) * 10 - 2,
-                    size: Math.random() * 4 + 1,
-                    life: Math.random() * 0.5 + 0.5,
-                    color: ['#66fcf1', '#45a29e', '#fff'][Math.floor(Math.random()*3)]
+        // Init Shine Particles (Tahap 3)
+        function createShinies() {
+            for(let i=0; i<50; i++) {
+                shinies.push({
+                    x: Math.random()*w, y: Math.random()*h,
+                    r: Math.random()*2+1, vy: Math.random()*-1-0.5,
+                    alpha: Math.random(), color: ['#ffca28', '#fff', '#ffe082'][Math.floor(Math.random()*3)]
                 });
             }
-            animateMagic();
+        }
+        
+        function drawShinies() {
+            shineCtx.clearRect(0,0,w,h);
+            shinies.forEach(s => {
+                s.y += s.vy; s.alpha -= 0.005;
+                if(s.alpha <= 0) { s.y = h + 10; s.alpha = 1; s.x = Math.random()*w; }
+                shineCtx.globalAlpha = s.alpha;
+                shineCtx.fillStyle = s.color;
+                shineCtx.beginPath(); shineCtx.arc(s.x, s.y, s.r, 0, Math.PI*2); shineCtx.fill();
+            });
+            if(document.getElementById('stage-2').style.display === 'flex') requestAnimationFrame(drawShinies);
         }
 
-        function animateMagic() {
-            pCtx.clearRect(0,0,pw,ph);
-            for(let i=magicParticles.length-1; i>=0; i--) {
-                let p = magicParticles[i];
-                p.x += p.vx; p.y += p.vy;
-                p.vy += 0.05; // gravity
-                p.life -= 0.01;
-                
-                pCtx.globalAlpha = Math.max(0, p.life);
-                pCtx.fillStyle = p.color;
-                pCtx.beginPath();
-                pCtx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-                pCtx.fill();
-                
-                if(p.life <= 0) magicParticles.splice(i, 1);
+        /* === HARDWARE INTERACTION (HOLD TO SUNRISE) === */
+        let riseProgress = 0; // 0 to 100
+        let riseInterval;
+        const lBtn = document.getElementById('light-btn');
+        const bodyHtml = document.body;
+        
+        // Warna Gradasi Sunrise (RGB)
+        // Awal: 13, 17, 23 (Gelap)
+        // Tengah: 255, 138, 101 (Oranye)
+        // Akhir: 255, 213, 79 (Kuning Sunshine)
+        
+        function getSunriseColor(progress) {
+            let r, g, b;
+            if (progress <= 50) {
+                // Gelap ke Oranye
+                r = 13 + (255 - 13) * (progress / 50);
+                g = 17 + (138 - 17) * (progress / 50);
+                b = 23 + (101 - 23) * (progress / 50);
+            } else {
+                // Oranye ke Kuning
+                r = 255;
+                g = 138 + (213 - 138) * ((progress - 50) / 50);
+                b = 101 + (79 - 101) * ((progress - 50) / 50);
             }
-            if(magicParticles.length > 0) requestAnimationFrame(animateMagic);
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function startSunrise(e) {
+            if(e) e.preventDefault();
+            if(riseProgress >= 100) return;
+            if(navigator.vibrate) navigator.vibrate(50);
+            
+            riseInterval = setInterval(() => {
+                riseProgress += 1.5; // Kecepatan terbit
+                bodyHtml.style.backgroundColor = getSunriseColor(riseProgress);
+                
+                // Efek partikel makin cepet kedip pas ditahan
+                starCanvas.style.opacity = 1 - (riseProgress / 100);
+                
+                if(riseProgress >= 100) { riseProgress = 100; finishSunrise(); }
+            }, 50);
+        }
+
+        function stopSunrise() {
+            clearInterval(riseInterval);
+            // Kalau dilepas sebelum 100%, balik ke gelap pelan-pelan
+            if(riseProgress < 100) {
+                riseInterval = setInterval(() => {
+                    riseProgress -= 3;
+                    if(riseProgress <= 0) { riseProgress = 0; clearInterval(riseInterval); }
+                    bodyHtml.style.backgroundColor = getSunriseColor(riseProgress);
+                    starCanvas.style.opacity = 1 - (riseProgress / 100);
+                }, 50);
+            }
+        }
+
+        function finishSunrise() {
+            clearInterval(riseInterval);
+            if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+            
+            // Efek Flash Silau
+            const flash = document.getElementById('flash-overlay');
+            flash.style.animation = 'flashEffect 1s ease';
+            
+            setTimeout(() => {
+                // Transisi Stage
+                document.getElementById('stage-1').style.display = 'none';
+                document.getElementById('stage-2').style.display = 'flex';
+                starCanvas.style.display = 'none';
+                
+                // Mulai Tanda Tangan & Partikel
+                createShinies();
+                drawShinies();
+                setTimeout(ngetikTyping, 800);
+                
+                setTimeout(() => { document.getElementById('stage-2').classList.add('active'); }, 50);
+            }, 500); // Pas tengah-tengah flash silau
+        }
+
+        lBtn.addEventListener('touchstart', startSunrise);
+        lBtn.addEventListener('touchend', stopSunrise);
+        lBtn.addEventListener('mousedown', startSunrise);
+        lBtn.addEventListener('mouseup', stopSunrise);
+
+        /* === TYPING & FINAL SIGN === */
+        const pesan = "akhirnya nyampe rumah juga. istirahat ya, bersihin badan terus rebahan. asal kamu tau, kamu itu <span>sunshine</span> aku.";
+        let charIndex = 0;
+        const typeContainer = document.getElementById('teks-ngetik');
+
+        function ngetikTyping() {
+            if (charIndex < pesan.length) {
+                let char = pesan.charAt(charIndex);
+                if (pesan.substring(charIndex, charIndex + 6) === "<span>") {
+                    typeContainer.innerHTML += "<span>sunshine</span>";
+                    charIndex += 15; // Panjang <span>sunshine</span>
+                } else {
+                    typeContainer.innerHTML += char;
+                    charIndex++;
+                }
+                setTimeout(ngetikTyping, 60); // Kecepatan ngetik
+            } else {
+                setTimeout(() => {
+                    document.getElementById('kafi-text').style.opacity = '1';
+                }, 500);
+            }
         }
     </script>
 </body>
