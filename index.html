@@ -2,281 +2,411 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>buat nur salshabila</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>buat salshabila</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         
-        body {
-            min-height: 100vh;
-            background: #1a1a2e; /* Warna gelap untuk tahap awal */
+        body, html {
+            width: 100%; height: 100%;
+            background-color: #0b0c10;
             font-family: 'Quicksand', sans-serif;
             overflow: hidden; 
-            color: #444;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background 1.5s ease;
-        }
-        body.light-mode {
-            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            color: #fff;
         }
 
-        /* --- SEMUA TAHAPAN (PHASES) --- */
-        .phase {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 1s ease;
+        /* --- BACKGROUND PARALLAX STARS --- */
+        #star-container {
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at center, #1f2833 0%, #0b0c10 100%);
+            z-index: 0; transition: transform 0.1s ease-out;
         }
-        .phase.active { opacity: 1; pointer-events: auto; }
+        canvas { display: block; position: absolute; top: 0; left: 0; }
+        #particle-canvas { z-index: 1; pointer-events: none; }
 
-        /* --- TAHAP 1: TRANSFER ENERGI --- */
-        #phase1 { color: #fff; }
-        .energy-title { font-size: 16px; margin-bottom: 30px; letter-spacing: 1px; color: #e94560; font-weight: 700; text-align: center; }
+        /* --- STAGE MANAGER --- */
+        .stage {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; z-index: 10;
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stage.active { opacity: 1; pointer-events: auto; }
+
+        /* --- STAGE 1: SCANNER --- */
+        .scan-ring {
+            width: 120px; height: 120px; border-radius: 50%;
+            border: 2px dashed #66fcf1;
+            position: relative; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 20px rgba(102, 252, 241, 0.2);
+            animation: rotateRing 10s linear infinite;
+            cursor: pointer;
+        }
+        .scan-ring::before {
+            content: ''; position: absolute; width: 80px; height: 80px;
+            border-radius: 50%; background: rgba(102, 252, 241, 0.1);
+            animation: pulseGlow 2s infinite alternate;
+        }
+        .scan-icon { font-size: 35px; position: absolute; z-index: 2; animation: none; transform: rotate(0deg) !important; }
+        /* Memastikan icon tidak ikut berputar dengan ring */
+        .scan-core { position: absolute; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; z-index: 5; }
         
-        .battery-box {
-            width: 150px; height: 60px;
-            border: 3px solid #e94560; border-radius: 10px;
-            position: relative; margin-bottom: 15px;
-            padding: 3px;
-        }
-        .battery-box::after {
-            content: ''; position: absolute;
-            right: -10px; top: 15px;
-            width: 7px; height: 24px;
-            background: #e94560; border-radius: 0 4px 4px 0;
-        }
-        .battery-fill {
-            width: 0%; height: 100%;
-            background: #e94560; border-radius: 5px;
-            transition: width 0.1s linear;
-        }
-        
-        .percent-text { font-size: 24px; font-weight: 700; margin-bottom: 40px; color: #fff; }
-        
-        .fingerprint-btn {
-            width: 80px; height: 80px;
-            background: rgba(233, 69, 96, 0.2);
-            border: 2px dashed #e94560;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 30px; animation: pulse 2s infinite;
-            transition: transform 0.2s; touch-action: none; cursor: pointer;
-        }
-        .finger-hint { margin-top: 15px; font-size: 12px; opacity: 0.7; }
-
-        /* --- TAHAP 2: BUKU HARIAN --- */
-        .journal-container {
-            background: #fdfbf7;
-            width: 85%; max-width: 380px;
-            padding: 40px 30px;
-            border-radius: 5px 15px 15px 5px;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.1), 10px 10px 30px rgba(0,0,0,0.15);
-            position: relative;
-        }
-        .journal-container::before {
-            content: ''; position: absolute;
-            left: 15px; top: 0; bottom: 0; width: 2px;
-            background: rgba(216, 27, 96, 0.3);
-        }
-        .typing-box {
-            min-height: 150px; text-align: left;
-            font-size: 16px; line-height: 1.8; color: #333;
-            font-weight: 500; margin-left: 20px;
-        }
-        .next-page-btn {
-            margin-top: 30px; font-size: 14px; font-weight: 700;
-            color: #d81b60; text-align: right; opacity: 0; cursor: pointer;
-            transition: opacity 0.5s; animation: bounceX 1.5s infinite;
+        .scan-text {
+            margin-top: 40px; font-size: 14px; font-weight: 700;
+            letter-spacing: 3px; color: #45a29e;
+            animation: blinkText 1.5s infinite;
         }
 
-        /* --- TAHAP 3: BUNGA MEKAR & FOTO --- */
-        .flower-container { position: relative; width: 220px; height: 220px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        
-        /* Foto di tengah (disembunyikan oleh kelopak awalnya) */
-        .photo-center {
-            position: absolute; width: 130px; height: 130px;
-            border-radius: 50%; border: 4px solid #fff;
-            object-fit: cover; opacity: 0; transform: scale(0.5);
-            transition: all 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 5; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        /* --- STAGE 2: CINEMATIC TYPING --- */
+        .cinema-box {
+            width: 85%; max-width: 400px;
+            background: rgba(31, 40, 51, 0.6);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(102, 252, 241, 0.2);
+            padding: 40px 30px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            transform: translateY(20px); transition: 1s;
         }
-
-        /* Kelopak Bunga (Petals) */
-        .petals { position: absolute; width: 100%; height: 100%; z-index: 10; transition: transform 1s; }
-        .petal {
-            position: absolute; top: 50%; left: 50%;
-            width: 70px; height: 70px;
-            background: #ff758c;
-            border-radius: 50% 50% 0 50%;
-            transform-origin: 0% 0%;
-            transition: all 1s ease-in-out;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        .stage.active .cinema-box { transform: translateY(0); }
+        .typing-text {
+            min-height: 140px; font-size: 16px; line-height: 1.8;
+            color: #c5c6c7; font-weight: 500; text-align: left;
         }
-        /* Rotasi awal (Kuncup) */
-        .p1 { transform: rotate(0deg) scale(0.6) translate(-5px, -5px); background: #ff7eb3; }
-        .p2 { transform: rotate(60deg) scale(0.6) translate(-5px, -5px); background: #ff758c; }
-        .p3 { transform: rotate(120deg) scale(0.6) translate(-5px, -5px); background: #ff7eb3; }
-        .p4 { transform: rotate(180deg) scale(0.6) translate(-5px, -5px); background: #ff758c; }
-        .p5 { transform: rotate(240deg) scale(0.6) translate(-5px, -5px); background: #ff7eb3; }
-        .p6 { transform: rotate(300deg) scale(0.6) translate(-5px, -5px); background: #ff758c; }
+        .typing-text span {
+            text-shadow: 0 0 5px rgba(102,252,241,0.5);
+            color: #66fcf1; font-weight: 700;
+        }
+        .btn-continue {
+            margin-top: 30px; padding: 12px 25px;
+            background: transparent; border: 1px solid #66fcf1;
+            color: #66fcf1; border-radius: 30px; font-family: 'Quicksand';
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            opacity: 0; transition: all 0.3s; pointer-events: none;
+        }
+        .btn-continue.show { opacity: 1; pointer-events: auto; }
+        .btn-continue:active { background: #66fcf1; color: #0b0c10; }
 
-        /* Stage Mekar */
-        .stage1 .petal { transform: scale(0.8) translate(-10px, -10px); }
-        .stage2 .petal { transform: scale(0.9) translate(-15px, -15px); }
-        .stage3 .p1 { transform: rotate(0deg) scale(1) translate(40px, 40px); opacity: 0.8;}
-        .stage3 .p2 { transform: rotate(60deg) scale(1) translate(40px, 40px); opacity: 0.8;}
-        .stage3 .p3 { transform: rotate(120deg) scale(1) translate(40px, 40px); opacity: 0.8;}
-        .stage3 .p4 { transform: rotate(180deg) scale(1) translate(40px, 40px); opacity: 0.8;}
-        .stage3 .p5 { transform: rotate(240deg) scale(1) translate(40px, 40px); opacity: 0.8;}
-        .stage3 .p6 { transform: rotate(300deg) scale(1) translate(40px, 40px); opacity: 0.8;}
+        /* --- STAGE 3: FROSTED GLASS REVEAL --- */
+        .photo-wrapper {
+            position: relative; width: 220px; height: 300px;
+            border-radius: 15px; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(102, 252, 241, 0.3);
+            border: 2px solid rgba(102, 252, 241, 0.4);
+        }
+        .photo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        #frost-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; touch-action: none; cursor: grab;
+        }
+        .wipe-hint {
+            position: absolute; top: -40px; left: 0; width: 100%;
+            text-align: center; color: #66fcf1; font-size: 14px; font-weight: 700;
+            animation: bounceY 2s infinite; z-index: 10;
+        }
+        .final-name {
+            margin-top: 30px; font-size: 22px; font-weight: 700;
+            color: #fff; text-shadow: 0 0 10px #66fcf1;
+            letter-spacing: 2px; opacity: 0; transform: translateY(10px);
+            transition: all 1.5s ease;
+        }
+        .final-sign {
+            margin-top: 10px; font-size: 16px; font-weight: 500;
+            color: #45a29e; opacity: 0; transform: translateY(10px);
+            transition: all 1.5s ease 0.5s;
+        }
+        .stage.active .revealed { opacity: 1; transform: translateY(0); }
 
-        .bloom .photo-center { opacity: 1; transform: scale(1); }
-        .bloom .petals { z-index: 1; }
-
-        .flower-hint { color: #d81b60; font-weight: 700; margin-top: 30px; font-size: 14px; animation: blink 1.5s infinite; }
-        .kafi-sign { font-size: 18px; font-weight: 700; color: #c2185b; opacity: 0; transition: opacity 1s; margin-top: 20px; }
-
-        /* Animations */
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(233, 69, 96, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(233, 69, 96, 0); } 100% { box-shadow: 0 0 0 0 rgba(233, 69, 96, 0); } }
-        @keyframes bounceX { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        /* --- KEYFRAMES --- */
+        @keyframes rotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulseGlow { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 1; } }
+        @keyframes blinkText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes bounceY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
 </head>
 <body>
 
-    <div id="phase1" class="phase active">
-        <div class="energy-title">sinkronisasi energi...</div>
-        <div class="battery-box"><div class="battery-fill" id="b-fill"></div></div>
-        <div class="percent-text" id="b-text">0%</div>
-        <div class="fingerprint-btn" id="finger-btn">👆</div>
-        <div class="finger-hint">tahan jarimu di sini buat kirim energi</div>
+    <div id="star-container">
+        <canvas id="stars-canvas"></canvas>
+    </div>
+    
+    <canvas id="particle-canvas"></canvas>
+
+    <div id="stage-1" class="stage active">
+        <div class="scan-core" id="scan-btn">
+            <div class="scan-icon">👆</div>
+        </div>
+        <div class="scan-ring"></div>
+        <div class="scan-text" id="scan-hint">TAHAN LAYAR UNTUK DEKRIPSI</div>
     </div>
 
-    <div id="phase2" class="phase">
-        <div class="journal-container">
-            <div class="typing-box" id="typing-text"></div>
-            <div class="next-page-btn" id="next-btn" onclick="goToPhase3()">buka halaman selanjutnya ➔</div>
+    <div id="stage-2" class="stage">
+        <div class="cinema-box">
+            <div class="typing-text" id="typewriter"></div>
+            <button class="btn-continue" id="btn-next" onclick="goToStage3()">buka pesan rahasia</button>
         </div>
     </div>
 
-    <div id="phase3" class="phase">
-        <div class="flower-container" onclick="tapFlower()">
-            <img src="sasha.jpg" class="photo-center" id="sasha-photo" alt="salshabila">
-            <div class="petals" id="flower-petals">
-                <div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div>
-                <div class="petal p4"></div><div class="petal p5"></div><div class="petal p6"></div>
-            </div>
+    <div id="stage-3" class="stage">
+        <div class="photo-wrapper">
+            <div class="wipe-hint" id="wipe-hint">usap embunnya pakai jari ✨</div>
+            <img src="sasha.jpg" alt="salshabila" id="sasha-img">
+            <canvas id="frost-canvas"></canvas>
         </div>
-        <div class="flower-hint" id="flower-hint">tap bunganya 3 kali buat siram 💧</div>
-        <div class="kafi-sign" id="kafi-text">istirahat bareng kafi ya 🤍</div>
+        <div class="final-name" id="f-name">nur salshabila</div>
+        <div class="final-sign" id="f-sign">istirahat bareng kafi ya 🤍</div>
     </div>
 
     <script>
-        /* --- LOGIKA TAHAP 1 (BATERAI) --- */
-        let charge = 0;
-        let chargeInterval;
-        const bFill = document.getElementById('b-fill');
-        const bText = document.getElementById('b-text');
-        const fBtn = document.getElementById('finger-btn');
+        /* =========================================
+           1. MASTER PARALLAX STARS & GYROSCOPE
+           ========================================= */
+        const starCanvas = document.getElementById('stars-canvas');
+        const starCtx = starCanvas.getContext('2d');
+        let sw = starCanvas.width = window.innerWidth * 2;
+        let sh = starCanvas.height = window.innerHeight * 2;
+        let stars = [];
 
-        function startCharge(e) {
+        for(let i=0; i<200; i++) {
+            stars.push({
+                x: Math.random() * sw, y: Math.random() * sh,
+                r: Math.random() * 1.5,
+                alpha: Math.random(),
+                speed: Math.random() * 0.05
+            });
+        }
+
+        function drawStars() {
+            starCtx.clearRect(0,0,sw,sh);
+            starCtx.fillStyle = "#fff";
+            stars.forEach(s => {
+                s.alpha += s.speed;
+                if(s.alpha > 1 || s.alpha < 0) s.speed *= -1;
+                starCtx.globalAlpha = Math.abs(s.alpha);
+                starCtx.beginPath();
+                starCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+                starCtx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // Parallax Effect based on Device Orientation (Gyroscope for HP)
+        const starContainer = document.getElementById('star-container');
+        window.addEventListener('deviceorientation', (e) => {
+            let x = e.gamma; // tilt left/right
+            let y = e.beta;  // tilt front/back
+            // Limit the tilt range
+            if(x > 30) x = 30; if(x < -30) x = -30;
+            if(y > 30) y = 30; if(y < -30) y = -30;
+            
+            // Apply translation to the container smoothly
+            starContainer.style.transform = `translate(${x * -1}px, ${y * -1}px)`;
+        });
+        // Fallback for desktop mouse
+        document.addEventListener('mousemove', (e) => {
+            let x = (window.innerWidth / 2 - e.pageX) / 10;
+            let y = (window.innerHeight / 2 - e.pageY) / 10;
+            starContainer.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+
+        /* =========================================
+           2. STAGE 1: SCANNER HOLD LOGIC
+           ========================================= */
+        let scanTimer;
+        let isScanning = false;
+        const scanBtn = document.getElementById('scan-btn');
+        const scanHint = document.getElementById('scan-hint');
+        
+        function startScan(e) {
             if(e) e.preventDefault();
-            if(charge >= 100) return;
-            fBtn.style.transform = 'scale(0.9)';
+            isScanning = true;
+            scanHint.innerText = "MENYINKRONKAN... JANGAN LEPAS";
+            scanHint.style.color = "#66fcf1";
             if(navigator.vibrate) navigator.vibrate(50);
             
-            chargeInterval = setInterval(() => {
-                charge += 1.5; 
-                if(charge >= 100) { charge = 100; finishCharge(); }
-                bFill.style.width = charge + '%';
-                bText.innerText = Math.floor(charge) + '%';
-            }, 30);
+            scanTimer = setTimeout(() => {
+                if(isScanning) {
+                    if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+                    document.getElementById('stage-1').classList.remove('active');
+                    setTimeout(() => {
+                        document.getElementById('stage-2').classList.add('active');
+                        startCinematicTyping();
+                    }, 1000);
+                }
+            }, 2500); // Harus ditahan 2.5 detik
+        }
+        
+        function stopScan() {
+            isScanning = false;
+            clearTimeout(scanTimer);
+            scanHint.innerText = "TAHAN LAYAR UNTUK DEKRIPSI";
+            scanHint.style.color = "#45a29e";
         }
 
-        function stopCharge() {
-            clearInterval(chargeInterval);
-            fBtn.style.transform = 'scale(1)';
-        }
+        scanBtn.addEventListener('touchstart', startScan);
+        scanBtn.addEventListener('touchend', stopScan);
+        scanBtn.addEventListener('mousedown', startScan);
+        scanBtn.addEventListener('mouseup', stopScan);
 
-        function finishCharge() {
-            clearInterval(chargeInterval);
-            bText.innerText = "100% Penuh!";
-            bFill.style.background = "#4caf50";
-            if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
-            
-            setTimeout(() => {
-                document.getElementById('phase1').classList.remove('active');
-                document.body.classList.add('light-mode'); // Ganti background jadi terang
-                
+
+        /* =========================================
+           3. STAGE 2: CINEMATIC TYPING
+           ========================================= */
+        const textToType = "akhirnya mendarat juga di zona nyaman. hari ini kerasa panjang banget ya? sekarang waktunya lepasin semua capeknya. bersihin badan, ganti baju yang nyaman, terus rebahan. dan asal kamu tau, aku kangen banget sama kamu.";
+        let typeIndex = 0;
+        const typeContainer = document.getElementById('typewriter');
+
+        function startCinematicTyping() {
+            if (typeIndex < textToType.length) {
+                let char = textToType.charAt(typeIndex);
+                // Highlight kata 'kangen' biar dramatis
+                if(textToType.substring(typeIndex, typeIndex+6) === "kangen") {
+                    typeContainer.innerHTML += "<span>kangen</span>";
+                    typeIndex += 6;
+                } else {
+                    typeContainer.innerHTML += char;
+                    typeIndex++;
+                }
+                setTimeout(startCinematicTyping, 60);
+            } else {
                 setTimeout(() => {
-                    document.getElementById('phase2').classList.add('active');
-                    startTyping();
-                }, 1000);
+                    document.getElementById('btn-next').classList.add('show');
+                }, 800);
+            }
+        }
+
+        function goToStage3() {
+            if(navigator.vibrate) navigator.vibrate(50);
+            document.getElementById('stage-2').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('stage-3').classList.add('active');
+                initFrost();
             }, 1000);
         }
 
-        // Support touch (HP) & klik (Mouse)
-        fBtn.addEventListener('touchstart', startCharge);
-        fBtn.addEventListener('touchend', stopCharge);
-        fBtn.addEventListener('mousedown', startCharge);
-        fBtn.addEventListener('mouseup', stopCharge);
-        fBtn.addEventListener('mouseleave', stopCharge);
 
-        /* --- LOGIKA TAHAP 2 (NGETIK JURNAL) --- */
-        const pesan = "akhirnya mendarat juga di zona nyaman. hari ini kerasa panjang banget ya? sekarang waktunya lepasin semua capeknya. bersihin badan, ganti baju yang nyaman, terus rebahan. dan asal kamu tau, aku kangen banget sama kamu.";
-        let charIndex = 0;
+        /* =========================================
+           4. STAGE 3: FROSTED GLASS REVEAL (MASTER CANVAS)
+           ========================================= */
+        const fCanvas = document.getElementById('frost-canvas');
+        const fCtx = fCanvas.getContext('2d');
+        let isWiping = false;
+        let wipedPixels = 0;
+        let totalWipeArea = 0;
+        let revealTriggered = false;
 
-        function startTyping() {
-            if (charIndex < pesan.length) {
-                document.getElementById("typing-text").innerHTML += pesan.charAt(charIndex);
-                charIndex++;
-                setTimeout(startTyping, 50); // Kecepatan ngetik
-            } else {
+        function initFrost() {
+            fCanvas.width = fCanvas.offsetWidth;
+            fCanvas.height = fCanvas.offsetHeight;
+            
+            // Draw frosted glass effect
+            fCtx.fillStyle = "rgba(180, 200, 220, 0.98)";
+            fCtx.fillRect(0, 0, fCanvas.width, fCanvas.height);
+            
+            // Add some "ice crystals" texture
+            for(let i=0; i<300; i++) {
+                fCtx.fillStyle = `rgba(255,255,255,${Math.random()*0.5})`;
+                fCtx.beginPath();
+                fCtx.arc(Math.random()*fCanvas.width, Math.random()*fCanvas.height, Math.random()*2, 0, Math.PI*2);
+                fCtx.fill();
+            }
+
+            fCtx.lineJoin = "round";
+            fCtx.lineCap = "round";
+            fCtx.lineWidth = 35; // Ukuran jari usap
+            fCtx.globalCompositeOperation = "destination-out";
+            totalWipeArea = (fCanvas.width * fCanvas.height) / (35 * 35);
+        }
+
+        function wipe(e) {
+            if(!isWiping || revealTriggered) return;
+            e.preventDefault();
+            let rect = fCanvas.getBoundingClientRect();
+            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            
+            fCtx.lineTo(x, y);
+            fCtx.stroke();
+            wipedPixels++;
+
+            // Jika digosok cukup banyak
+            if(wipedPixels > 60 && !revealTriggered) {
+                revealTriggered = true;
+                document.getElementById('wipe-hint').style.display = 'none';
+                
+                // Fade out the remaining frost
+                fCanvas.style.transition = "opacity 1.5s ease";
+                fCanvas.style.opacity = "0";
+                
+                if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                
+                // Show final text and launch particles
                 setTimeout(() => {
-                    document.getElementById('next-btn').style.opacity = '1';
+                    document.getElementById('f-name').classList.add('revealed');
+                    document.getElementById('f-sign').classList.add('revealed');
+                    fCanvas.style.display = "none";
+                    launchMagicParticles();
                 }, 500);
             }
         }
 
-        function goToPhase3() {
-            document.getElementById('phase2').classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('phase3').classList.add('active');
-            }, 800);
+        fCanvas.addEventListener('mousedown', (e) => { isWiping = true; let rect = fCanvas.getBoundingClientRect(); fCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top); });
+        fCanvas.addEventListener('mousemove', wipe);
+        fCanvas.addEventListener('mouseup', () => isWiping = false);
+        
+        fCanvas.addEventListener('touchstart', (e) => { isWiping = true; let rect = fCanvas.getBoundingClientRect(); fCtx.moveTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top); });
+        fCanvas.addEventListener('touchmove', wipe);
+        fCanvas.addEventListener('touchend', () => isWiping = false);
+
+
+        /* =========================================
+           5. MAGIC PARTICLES SYSTEM (AKHIR)
+           ========================================= */
+        const pCanvas = document.getElementById('particle-canvas');
+        const pCtx = pCanvas.getContext('2d');
+        let pw, ph;
+        let magicParticles = [];
+
+        function resizePCanvas() {
+            pw = pCanvas.width = window.innerWidth;
+            ph = pCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizePCanvas);
+        resizePCanvas();
+
+        function launchMagicParticles() {
+            for(let i=0; i<100; i++) {
+                magicParticles.push({
+                    x: pw/2, y: ph/2 + 50,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10 - 2,
+                    size: Math.random() * 4 + 1,
+                    life: Math.random() * 0.5 + 0.5,
+                    color: ['#66fcf1', '#45a29e', '#fff'][Math.floor(Math.random()*3)]
+                });
+            }
+            animateMagic();
         }
 
-        /* --- LOGIKA TAHAP 3 (BUNGA MEKAR) --- */
-        let flowerTaps = 0;
-        const petals = document.getElementById('flower-petals');
-        const hint = document.getElementById('flower-hint');
-
-        function tapFlower() {
-            if(flowerTaps >= 3) return;
-            flowerTaps++;
-            if(navigator.vibrate) navigator.vibrate(40);
-            
-            if(flowerTaps === 1) {
-                petals.className = 'petals stage1';
-                hint.innerText = "lagi... tap 2 kali lagi 💧";
-            } else if(flowerTaps === 2) {
-                petals.className = 'petals stage2';
-                hint.innerText = "satu kali lagi! ✨";
-            } else if(flowerTaps === 3) {
-                if(navigator.vibrate) navigator.vibrate([100, 50, 200]);
-                petals.className = 'petals stage3 bloom';
-                document.getElementById('phase3').classList.add('bloom');
-                hint.style.display = 'none';
+        function animateMagic() {
+            pCtx.clearRect(0,0,pw,ph);
+            for(let i=magicParticles.length-1; i>=0; i--) {
+                let p = magicParticles[i];
+                p.x += p.vx; p.y += p.vy;
+                p.vy += 0.05; // gravity
+                p.life -= 0.01;
                 
-                // Muncilin teks kafi
-                setTimeout(() => {
-                    document.getElementById('kafi-text').style.opacity = '1';
-                }, 1000);
+                pCtx.globalAlpha = Math.max(0, p.life);
+                pCtx.fillStyle = p.color;
+                pCtx.beginPath();
+                pCtx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                pCtx.fill();
+                
+                if(p.life <= 0) magicParticles.splice(i, 1);
             }
+            if(magicParticles.length > 0) requestAnimationFrame(animateMagic);
         }
     </script>
 </body>
