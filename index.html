@@ -1,693 +1,101 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>for you ❤️</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    height:100vh;
-    overflow:hidden;
-    font-family:'Poppins',sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    background:
-    radial-gradient(circle at top left,#ff7eb633 0%,transparent 25%),
-    radial-gradient(circle at bottom right,#ffc2de33 0%,transparent 25%),
-    linear-gradient(135deg,#0f0015,#24002f,#3b004c);
-
-    position:relative;
-}
-
-/* intro */
-#intro{
-    position:fixed;
-    inset:0;
-
-    background:
-    radial-gradient(circle at top,#ff9acb22 0%,transparent 40%),
-    linear-gradient(135deg,#0f0015,#24002f,#3b004c);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    z-index:9999;
-
-    animation:introFade 2.5s forwards;
-    animation-delay:2.8s;
-
-    overflow:hidden;
-}
-
-#intro::before{
-    content:"";
-    position:absolute;
-
-    width:350px;
-    height:350px;
-
-    background:#ff6db6;
-
-    border-radius:50%;
-
-    filter:blur(120px);
-
-    opacity:.35;
-
-    animation:pulseGlow 4s infinite alternate;
-}
-
-#intro h1{
-    position:relative;
-
-    color:white;
-
-    font-size:58px;
-    font-weight:600;
-
-    letter-spacing:2px;
-
-    text-shadow:
-    0 0 12px rgba(255,255,255,.55),
-    0 0 30px rgba(255,105,180,.45);
-
-    animation:introText 2s ease;
-}
-
-@keyframes introText{
-
-    0%{
-        opacity:0;
-        transform:translateY(25px) scale(.9);
-        letter-spacing:10px;
-    }
-
-    100%{
-        opacity:1;
-        transform:translateY(0) scale(1);
-        letter-spacing:2px;
-    }
-}
-
-@keyframes pulseGlow{
-
-    from{
-        transform:scale(1);
-        opacity:.25;
-    }
-
-    to{
-        transform:scale(1.2);
-        opacity:.4;
-    }
-}
-
-@keyframes introFade{
-    to{
-        opacity:0;
-        visibility:hidden;
-    }
-}
-
-/* stars */
-.star{
-    position:absolute;
-    width:2px;
-    height:2px;
-    background:white;
-    border-radius:50%;
-    animation:blink 2s infinite alternate;
-}
-
-@keyframes blink{
-    from{opacity:.2;}
-    to{opacity:1;}
-}
-
-/* hearts */
-.heart{
-    position:absolute;
-    color:#ff8fc5;
-    animation:float 8s linear infinite;
-    opacity:.7;
-    pointer-events:none;
-}
-
-@keyframes float{
-
-    0%{
-        transform:translateY(100vh) scale(.5);
-        opacity:0;
-    }
-
-    10%{
-        opacity:1;
-    }
-
-    100%{
-        transform:translateY(-120vh) scale(1.8);
-        opacity:0;
-    }
-}
-
-/* card */
-.card{
-
-    width:380px;
-
-    padding:42px 30px;
-
-    border-radius:35px;
-
-    background:rgba(255,255,255,.08);
-
-    backdrop-filter:blur(18px);
-
-    border:1px solid rgba(255,255,255,.12);
-
-    box-shadow:
-    0 0 25px rgba(255,105,180,.18),
-    0 0 70px rgba(255,105,180,.12),
-    inset 0 0 15px rgba(255,255,255,.05);
-
-    text-align:center;
-
-    position:relative;
-
-    overflow:hidden;
-
-    animation:show 1.3s ease;
-
-    z-index:2;
-}
-
-@keyframes show{
-
-    from{
-        opacity:0;
-        transform:translateY(30px) scale(.95);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-    }
-}
-
-/* border glow */
-.card::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:-2px;
-
-    border-radius:35px;
-
-    padding:2px;
-
-    background:linear-gradient(
-    45deg,
-    #ff5ba8,
-    #ffffff,
-    #ff9bcf,
-    #ff5ba8
-    );
-
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-
-    -webkit-mask-composite:xor;
-            mask-composite:exclude;
-
-    animation:rotate 7s linear infinite;
-
-    pointer-events:none;
-}
-
-@keyframes rotate{
-    100%{
-        transform:rotate(360deg);
-    }
-}
-
-/* title */
-.title{
-
-    font-size:42px;
-
-    font-weight:600;
-
-    color:white;
-
-    margin-bottom:10px;
-
-    letter-spacing:1px;
-
-    text-shadow:
-    0 0 10px rgba(255,255,255,.4),
-    0 0 25px rgba(255,105,180,.35);
-
-    animation:titleGlow 3s infinite alternate;
-}
-
-@keyframes titleGlow{
-
-    from{
-        text-shadow:
-        0 0 10px rgba(255,255,255,.3),
-        0 0 25px rgba(255,105,180,.25);
-    }
-
-    to{
-        text-shadow:
-        0 0 18px rgba(255,255,255,.6),
-        0 0 40px rgba(255,105,180,.55);
-    }
-}
-
-.small{
-    color:#ffd7ea;
-    font-size:13px;
-    letter-spacing:2px;
-    margin-bottom:25px;
-}
-
-.message{
-    color:white;
-    font-size:16px;
-    line-height:1.9;
-    margin-bottom:28px;
-    transition:.3s;
-    min-height:120px;
-}
-
-.highlight{
-    color:#ffaad4;
-    font-weight:600;
-}
-
-/* button */
-button{
-
-    border:none;
-
-    padding:14px 30px;
-
-    border-radius:40px;
-
-    background:linear-gradient(
-    45deg,
-    #ff5ba8,
-    #ff9ccf
-    );
-
-    color:white;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.35s;
-
-    box-shadow:
-    0 10px 25px rgba(255,91,168,.35),
-    0 0 20px rgba(255,91,168,.25);
-
-    position:relative;
-
-    z-index:10;
-}
-
-button:hover{
-
-    transform:translateY(-3px) scale(1.04);
-
-    box-shadow:
-    0 15px 35px rgba(255,91,168,.5),
-    0 0 30px rgba(255,91,168,.45);
-}
-
-/* music icon */
-.music{
-    position:absolute;
-    top:18px;
-    right:22px;
-    color:white;
-    font-size:20px;
-    animation:pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-
-    0%,100%{
-        transform:scale(1);
-    }
-
-    50%{
-        transform:scale(1.15);
-    }
-}
-
-/* ending */
-#ending{
-
-    position:fixed;
-    inset:0;
-
-    background:
-    radial-gradient(circle at top,#ff9acb22 0%,transparent 40%),
-    linear-gradient(135deg,#0f0015,#24002f,#3b004c);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    opacity:0;
-    visibility:hidden;
-
-    transition:1s;
-
-    z-index:99999;
-}
-
-#ending.show{
-    opacity:1;
-    visibility:visible;
-}
-
-.ending-box{
-
-    width:340px;
-
-    padding:40px 30px;
-
-    border-radius:30px;
-
-    text-align:center;
-
-    background:rgba(255,255,255,.08);
-
-    backdrop-filter:blur(18px);
-
-    border:1px solid rgba(255,255,255,.12);
-
-    box-shadow:
-    0 0 25px rgba(255,105,180,.18),
-    0 0 70px rgba(255,105,180,.12),
-    inset 0 0 15px rgba(255,255,255,.05);
-
-    animation:endingShow 1s ease;
-}
-
-@keyframes endingShow{
-
-    from{
-        transform:translateY(40px) scale(.9);
-        opacity:0;
-    }
-
-    to{
-        transform:translateY(0) scale(1);
-        opacity:1;
-    }
-}
-
-.ending-box h1{
-
-    color:white;
-
-    font-size:32px;
-
-    margin-bottom:15px;
-
-    text-shadow:
-    0 0 10px rgba(255,255,255,.4),
-    0 0 25px rgba(255,105,180,.35);
-}
-
-.ending-box p{
-
-    color:#ffd7ea;
-
-    font-size:14px;
-
-    line-height:1.8;
-
-    margin-bottom:25px;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #fce4ec; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 400px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 2s ease forwards;
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: normal;
+        }
+
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .wa-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #f8bbd0;
+            color: #c2185b;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: 0.3s;
+            border: 1px solid #f48fb1;
+        }
+
+        .wa-btn:hover {
+            background-color: #f48fb1;
+            transform: scale(1.05);
+            color: #fff;
+        }
+
+        .heart {
+            color: #d81b60;
+            font-size: 30px;
+            margin-top: 25px;
+            animation: beat 1.5s infinite;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- intro -->
-<div id="intro">
-    <h1>i love you mosttttt 🤍</h1>
-</div>
-
-<!-- music -->
-<audio id="bg-music" loop>
-    <source src="./Rio Clappy - Bunga Abadi Official Lyric Video.mp3" type="audio/mp3">
-</audio>
-
-<!-- card -->
-<div class="card">
-
-    <div class="music">♫</div>
-
-    <div class="title">for you</div>
-
-    <div class="small">made with love</div>
-
-    <div class="message" id="message">
-        dari semua orang yang pernah hadir di hidup aku,  
-        <span class="highlight">kamu</span> tetap jadi orang paling nyaman buat aku ❤️
+    <div class="container">
+        <h1>selamat sampai rumah, salshabila.</h1>
+        <p>pasti capek ya di jalan? sekarang istirahat yang cukup, bersihin badan, terus rebahan. jangan lupa makan ya.</p>
+        <p>istirahat bareng kafi ya 🤍</p>
+        
+        <!-- Tombol WhatsApp -->
+        <a href="https://wa.me/6285794728731?text=aku%20kangen%20kamu%20sayang" class="wa-btn">kalo click ini kamu kangen aku</a>
+        
+        <div class="heart">❤</div>
     </div>
-
-    <button onclick="changeMessage()" id="mainButton">
-        klik ini ✨
-    </button>
-
-</div>
-
-<!-- ending -->
-<div id="ending">
-
-    <div class="ending-box">
-
-        <h1>thank you for reading 🤍</h1>
-
-        <p>
-            aku harap semua hal kecil ini bisa bikin kamu senyum sedikit aja.
-        </p>
-
-        <button id="waButton">
-            klik di sini yaa 🤍
-        </button>
-
-    </div>
-
-</div>
-
-<script>
-
-/* autoplay music */
-window.addEventListener("load", () => {
-
-    const music =
-    document.getElementById("bg-music");
-
-    music.play().catch(() => {
-
-        document.body.addEventListener("click", () => {
-            music.play();
-        }, { once:true });
-
-    });
-
-});
-
-/* texts */
-let messages = [
-
-`aku sayang banget sama kamu ❤️`,
-
-`aku akan selalu berusaha bikin kamu bahagia walaupun aku banyak kurangnya 🥺`,
-
-`aku mau jadi alasan kamu senyum tiap hari.`,
-
-`aku akan buktiin ke orang tua kamu kalau aku serius sama kamu 🤍`,
-
-`aku gamau jadi sekadar hadir, aku mau jadi rumah buat kamu.`,
-
-`aku mau nemenin kamu selama mungkin.`,
-
-`aku harap kita ga cuma sementara.`,
-
-`setiap notif dari kamu selalu bikin hati aku tenang ✨`,
-
-`aku nyaman banget sama kamu.`,
-
-`aku gamau kehilangan kamu.`,
-
-`kalau dunia lagi jahat sama kamu, sini cerita ke aku ya.`,
-
-`aku bakal selalu dengerin semua cerita kamu.`,
-
-`aku mau jadi tempat terakhir kamu pulang ❤️`,
-
-`aku bakal usahain jadi cowok terbaik buat kamu.`,
-
-`aku suka semua hal tentang kamu, bahkan hal kecil yang mungkin kamu ga sadar.`,
-
-`kalau aku bisa milih lagi, aku bakal tetap milih kamu.`,
-
-`aku cuma mau hubungan ini bertahan lama.`,
-
-`aku seneng banget waktu sama kamu.`,
-
-`kamu itu rumah paling nyaman yang pernah aku temuin.`,
-
-`aku harap kita bisa bareng terus sampai kapanpun 🤍`,
-
-`aku bakal jagain hati kamu sebisa aku.`,
-
-`aku ga janji jadi sempurna, tapi aku janji bakal serius sama kamu.`,
-
-`makasih ya udah hadir di hidup aku ❤️`,
-
-`aku beruntung banget bisa kenal kamu.`,
-
-`aku harap kamu ga bosen sama aku.`,
-
-`aku pengen selalu ada di samping kamu.`,
-
-`aku bakal bahagiain kamu pelan-pelan, satu per satu.`,
-
-`aku sayang kamu lebih dari yang bisa dijelasin kata-kata.`
-
-];
-
-function changeMessage(){
-
-    const text =
-    document.getElementById("message");
-
-    const button =
-    document.getElementById("mainButton");
-
-    if(messages.length === 0){
-
-        text.innerHTML =
-        "aku bakal tetap sayang sama kamu selamanya ❤️";
-
-        button.style.display = "none";
-
-        setTimeout(() => {
-
-            document
-            .getElementById("ending")
-            .classList.add("show");
-
-        }, 2500);
-
-        return;
-    }
-
-    const random =
-    Math.floor(Math.random() * messages.length);
-
-    text.style.opacity = "0";
-
-    setTimeout(() => {
-
-        text.innerHTML =
-        messages[random];
-
-        text.style.opacity = "1";
-
-        messages.splice(random,1);
-
-    },200);
-}
-
-/* whatsapp */
-document.getElementById("waButton").onclick =
-function(){
-
-    window.location.href =
-    "https://wa.me/6285794728731?text=%F0%9F%A4%8D";
-
-};
-
-/* hearts */
-function createHeart(){
-
-    const heart =
-    document.createElement("div");
-
-    heart.classList.add("heart");
-
-    heart.innerHTML = "❤";
-
-    heart.style.left =
-    Math.random()*100 + "vw";
-
-    heart.style.fontSize =
-    (Math.random()*20 + 15) + "px";
-
-    heart.style.animationDuration =
-    (Math.random()*5 + 5) + "s";
-
-    document.body.appendChild(heart);
-
-    setTimeout(()=>{
-        heart.remove();
-    },10000);
-}
-
-setInterval(createHeart,250);
-
-/* stars */
-for(let i=0;i<120;i++){
-
-    const star =
-    document.createElement("div");
-
-    star.classList.add("star");
-
-    star.style.left =
-    Math.random()*100 + "vw";
-
-    star.style.top =
-    Math.random()*100 + "vh";
-
-    star.style.animationDuration =
-    (Math.random()*3 + 1) + "s";
-
-    document.body.appendChild(star);
-}
-
-</script>
 
 </body>
 </html>
