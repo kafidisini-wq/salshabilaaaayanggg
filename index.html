@@ -4,471 +4,315 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>buat salshabila</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body {
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
             font-family: 'Quicksand', sans-serif;
             overflow: hidden; 
-            text-align: center;
             color: #444;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Canvas Interaktif di Background */
-        #interactive-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: auto;
-        }
-
-        /* Loading Screen */
-        #loading-screen {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #ffe3e8;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1s ease;
-        }
-        .loader-heart {
-            color: #d81b60;
-            font-size: 50px;
-            animation: beat 1s infinite alternate;
-        }
-        .loader-text {
-            margin-top: 20px;
-            font-weight: 700;
-            color: #d81b60;
-            letter-spacing: 2px;
-            font-size: 14px;
-            animation: blink 1.5s infinite;
-        }
-
-        /* Main Container (Glassmorphism) */
-        .container {
-            position: relative;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 40px 25px;
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 420px;
-            display: none;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 1s ease;
-        }
-        .container.show {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Layar PIN */
-        #pin-step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .pin-title { font-size: 18px; font-weight: 700; color: #c2185b; margin-bottom: 20px; }
-        .pin-input {
-            width: 80%;
-            padding: 12px;
-            border: 2px solid #ff758c;
-            border-radius: 15px;
-            text-align: center;
-            font-size: 18px;
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 700;
-            color: #d81b60;
-            outline: none;
-            background: rgba(255,255,255,0.7);
-            letter-spacing: 2px;
-            transition: 0.3s;
-        }
-        .pin-input:focus { background: #fff; box-shadow: 0 0 10px rgba(255, 117, 140, 0.5); }
-        .pin-hint-text {
-            color: #d81b60;
-            font-size: 13px;
-            font-weight: 700;
-            margin-top: 15px;
-            display: none;
-            animation: blink 1s infinite;
-        }
-
-        /* Tampilan Awal: Kado */
-        #step1 {
-            display: none; /* disembunyiin sampai pin bener */
-            flex-direction: column;
-            align-items: center;
-        }
-        .gift-wrapper {
-            position: relative;
-            width: 120px;
-            height: 120px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
-            cursor: pointer;
         }
-        .gift-box {
-            font-size: 80px;
-            animation: floatGift 2.5s infinite;
-            transition: transform 0.3s;
-        }
-        .gift-wrapper:active .gift-box { transform: scale(0.85); }
-        .tap-hint {
-            position: absolute;
-            bottom: -10px;
-            background: #d81b60;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            animation: float 2s infinite;
-        }
-        .intro-text { font-size: 16px; font-weight: 700; color: #c2185b; }
 
-        /* Tampilan Pesan */
-        #step2 { display: none; }
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            top: 20px; right: 20px;
+            width: 45px; height: 45px;
+            background: #111;
+            border-radius: 50%;
+            border: 3px solid #ff758c;
+            animation: spin 3s linear infinite;
+            animation-play-state: paused;
+            z-index: 999;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0; transition: opacity 1s;
+        }
+        .music-player::after { content: ''; width: 12px; height: 12px; background: #ff7eb3; border-radius: 50%; border: 2px solid #222; }
+        .music-player.playing { animation-play-state: running; }
+
+        /* Canvas Background */
+        #bg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* Loading */
+        #loading-screen { position: absolute; width: 100%; height: 100%; background: #ffe3e8; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 1s; }
+        .heart-beat { color: #d81b60; font-size: 50px; animation: beat 1s infinite alternate; }
         
-        .typing-container {
-            min-height: 120px;
-            margin-bottom: 25px;
-            font-size: 16px;
-            line-height: 1.7;
-            color: #333;
-            font-weight: 500;
-            text-align: left;
-            position: relative;
-        }
-        .typing-container::after {
-            content: '|';
-            position: absolute;
-            right: -10px;
-            bottom: 0;
-            animation: blink 0.7s infinite;
-            color: #d81b60;
-            display: none;
-        }
-        .typing-container.typing::after { display: inline-block; }
-
-        /* Elemen Final */
-        #final-elements {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: none;
-        }
-        #final-elements.show {
-            opacity: 1;
-            transform: translateY(0);
-            display: block;
-        }
-
-        /* Polaroid Polaroid */
-        .polaroid {
-            background: #fff;
-            padding: 12px 12px 35px 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            display: inline-block;
-            transform: rotate(-4deg);
-            margin-bottom: 25px;
-            border-radius: 4px;
-            transition: transform 0.4s ease;
-        }
-        .polaroid:hover { transform: rotate(0deg) scale(1.05); }
-        .polaroid img {
-            width: 160px;
-            height: 160px;
-            object-fit: cover;
-            background-color: #f0f0f0;
-            border-radius: 2px;
-        }
-        .polaroid-text {
-            font-size: 15px;
-            color: #d81b60;
-            font-weight: 700;
-            position: absolute;
-            bottom: 10px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-        }
-
-        .kafi-text { 
-            font-size: 17px; 
-            font-weight: 700; 
-            color: #c2185b; 
-            margin-bottom: 25px; 
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
-        }
-
-        .wa-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 28px;
-            background: linear-gradient(45deg, #ff758c, #ff7eb3);
-            color: #fff;
-            text-decoration: none;
+        /* Glass Container */
+        .glass-box {
+            position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 40px 20px;
             border-radius: 30px;
-            font-size: 15px;
-            font-weight: 700;
-            box-shadow: 0 6px 15px rgba(255, 117, 140, 0.4);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            font-family: 'Quicksand', sans-serif;
-            margin-top: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            width: 90%; max-width: 400px;
+            text-align: center;
+            display: none; opacity: 0; transform: translateY(30px);
+            transition: all 1s;
         }
-        .wa-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s;
-        }
-        .wa-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 117, 140, 0.6); }
-        .wa-btn:hover::before { left: 100%; }
+        .glass-box.show { display: block; opacity: 1; transform: translateY(0); }
 
-        /* Keyframes */
-        @keyframes beat { 0% { transform: scale(1); } 100% { transform: scale(1.3); } }
+        /* PIN Pad UI */
+        #pin-screen { display: flex; flex-direction: column; align-items: center; }
+        .pin-title { color: #c2185b; font-size: 18px; font-weight: 700; margin-bottom: 25px; }
+        .pin-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; height: 15px; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #ff758c; transition: 0.2s; }
+        .dot.active { background: #ff758c; transform: scale(1.2); box-shadow: 0 0 10px #ff758c; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .key-btn { width: 65px; height: 65px; border-radius: 50%; background: rgba(255,255,255,0.6); border: none; font-size: 22px; font-weight: 700; color: #d81b60; box-shadow: 0 5px 15px rgba(0,0,0,0.05); font-family: 'Quicksand'; transition: 0.1s; }
+        .key-btn:active { background: #ff758c; color: white; transform: scale(0.9); }
+        .key-del { font-size: 16px; background: rgba(255,255,255,0.3); }
+
+        /* 3D Envelope */
+        #envelope-screen { display: none; flex-direction: column; align-items: center; padding: 30px 0; }
+        .env-wrapper { position: relative; width: 260px; height: 180px; margin-bottom: 20px; cursor: pointer; transform: scale(1); transition: 0.3s; }
+        .env-wrapper:active { transform: scale(0.95); }
+        .env-back { position: absolute; width: 100%; height: 100%; background: #e91e63; border-radius: 5px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        .env-letter-card { position: absolute; width: 90%; height: 90%; background: #fff; left: 5%; bottom: 5%; border-radius: 5px; display: flex; justify-content: center; align-items: center; color: #d81b60; font-weight: 700; transition: transform 0.8s ease; z-index: 2; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .env-front { position: absolute; width: 100%; height: 100%; border-left: 130px solid #f48fb1; border-right: 130px solid #f48fb1; border-bottom: 90px solid #f06292; border-top: 90px solid transparent; z-index: 3; border-radius: 0 0 5px 5px; }
+        .env-flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 130px solid transparent; border-right: 130px solid transparent; border-top: 100px solid #ff4081; transform-origin: top; transition: transform 0.6s ease; z-index: 4; }
+        
+        .env-wrapper.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+        .env-wrapper.open .env-letter-card { transform: translateY(-100px); z-index: 5; }
+        .hint-pulse { color: #d81b60; font-weight: 700; font-size: 14px; animation: blink 1.5s infinite; }
+
+        /* Surat & Polaroid 3D */
+        #message-screen { display: none; }
+        .typing-box { min-height: 120px; text-align: left; font-size: 16px; line-height: 1.7; color: #333; font-weight: 500; margin-bottom: 20px; }
+        
+        #final-reveal { display: none; opacity: 0; transform: translateY(20px); transition: 1s; perspective: 1000px; }
+        #final-reveal.show { display: block; opacity: 1; transform: translateY(0); }
+        
+        .polaroid-container { position: relative; width: 180px; margin: 0 auto 20px auto; transform-style: preserve-3d; transition: transform 0.1s ease-out; }
+        .polaroid { background: white; padding: 12px 12px 35px 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border-radius: 4px; transform: rotate(-3deg); }
+        .polaroid img { width: 100%; height: 156px; object-fit: cover; background: #eee; }
+        .polaroid-text { position: absolute; bottom: 10px; width: 100%; left: 0; text-align: center; color: #d81b60; font-weight: 700; font-size: 15px; }
+        
+        .kafi-sign { font-size: 17px; font-weight: 700; color: #c2185b; }
+
+        /* Animations */
+        @keyframes beat { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes floatGift {
-            0%, 100% { transform: translateX(0) rotate(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px) rotate(-2deg); }
-            20%, 40%, 60%, 80% { transform: translateX(2px) rotate(2deg); }
-        }
-        @keyframes shakeError {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-10px); }
-            40%, 80% { transform: translateX(10px); }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
     </style>
 </head>
 <body>
 
+    <audio id="bgm" loop>
+        <source src="lagu.mp3" type="audio/mpeg">
+    </audio>
+    <div class="music-player" id="music-btn" onclick="toggleMusic()"></div>
+
+    <canvas id="bg-canvas"></canvas>
+
     <div id="loading-screen">
-        <div class="loader-heart">❤</div>
-        <div class="loader-text">menyiapkan sesuatu buat salshabila...</div>
+        <div class="heart-beat">❤</div>
+        <div style="margin-top: 15px; color:#d81b60; font-weight:700;">tunggu sebentar...</div>
     </div>
 
-    <canvas id="interactive-canvas"></canvas>
-
-    <div class="container" id="main-container">
+    <div class="glass-box" id="main-ui">
         
-        <div id="pin-step">
-            <div class="pin-title">masukin pin dulu ya 🔒</div>
-            <input type="number" id="input-pin" class="pin-input" placeholder="xxxxxx" inputmode="numeric">
-            <button class="wa-btn" onclick="cekPin()">buka</button>
-            <div id="pin-hint" class="pin-hint-text">coba tanggal jadian kita</div>
-        </div>
-
-        <div id="step1">
-            <div class="gift-wrapper" onclick="bukaKado()">
-                <div class="gift-box">🎁</div>
-                <div class="tap-hint">tap aku</div>
+        <div id="pin-screen">
+            <div class="pin-title" id="pin-teks">masukin pin rahasia 🔒</div>
+            <div class="pin-dots" id="dots-container">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
-            <div class="intro-text">ada paket spesial nih.</div>
+            <div class="keypad">
+                <button class="key-btn" onclick="press(1)">1</button>
+                <button class="key-btn" onclick="press(2)">2</button>
+                <button class="key-btn" onclick="press(3)">3</button>
+                <button class="key-btn" onclick="press(4)">4</button>
+                <button class="key-btn" onclick="press(5)">5</button>
+                <button class="key-btn" onclick="press(6)">6</button>
+                <button class="key-btn" onclick="press(7)">7</button>
+                <button class="key-btn" onclick="press(8)">8</button>
+                <button class="key-btn" onclick="press(9)">9</button>
+                <button class="key-btn key-del" onclick="hapus()">DEL</button>
+                <button class="key-btn" onclick="press(0)">0</button>
+                <button class="key-btn key-del" onclick="cekPin()">OK</button>
+            </div>
         </div>
 
-        <div id="step2">
-            <div class="typing-container typing" id="text-typing"></div>
-            
-            <div id="final-elements">
-                <div class="polaroid">
-                    <img src="sasha.jpg" alt="salshabila">
-                    <span class="polaroid-text">untuk salshabila</span>
+        <div id="envelope-screen">
+            <div class="env-wrapper" id="amplop" onclick="bukaAmplop()">
+                <div class="env-back"></div>
+                <div class="env-letter-card">buat salshabila</div>
+                <div class="env-front"></div>
+                <div class="env-flap"></div>
+            </div>
+            <div class="hint-pulse">tap amplopnya</div>
+        </div>
+
+        <div id="message-screen">
+            <div class="typing-box" id="teks-ketik"></div>
+            <div id="final-reveal">
+                <div class="polaroid-container" id="p-card">
+                    <div class="polaroid">
+                        <img src="sasha.jpg" alt="salshabila">
+                        <div class="polaroid-text">untuk salshabila</div>
+                    </div>
                 </div>
-                <div class="kafi-text">istirahat bareng kafi ya 🤍</div>
-                <a href="https://wa.me/6285794728731?text=aku%20kangen%20kamu%20sayang" class="wa-btn">kalo click ini kamu kangen aku</a>
+                <div class="kafi-sign">istirahat bareng kafi ya 🤍</div>
             </div>
         </div>
 
     </div>
 
     <script>
-        /* === SISTEM PARTIKEL CANVAS (BACKGROUND & EFEK KLIK) === */
-        const canvas = document.getElementById('interactive-canvas');
+        /* Partikel Background */
+        const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let w, h;
         let particles = [];
-        let fireflies = [];
-
-        function resizeCanvas() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Firefly {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 1 - 0.5;
-                this.speedY = Math.random() * 1 - 0.5;
-                this.opacity = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if(this.x < 0 || this.x > width) this.speedX *= -1;
-                if(this.y < 0 || this.y > height) this.speedY *= -1;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.fill();
+        
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        
+        function createP(x, y) {
+            for(let i=0; i<6; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: Math.random()*4-2, vy: Math.random()*-4-1,
+                    size: Math.random()*10+5, life: 1,
+                    c: ['#ff758c', '#ff7eb3', '#fff'][Math.floor(Math.random()*3)]
+                });
             }
         }
+        function drawP() {
+            ctx.clearRect(0,0,w,h);
+            for(let i=particles.length-1; i>=0; i--) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life -= 0.02;
+                ctx.globalAlpha = Math.max(0, p.life);
+                ctx.font = p.size + "px Arial"; ctx.fillStyle = p.c;
+                ctx.fillText('❤', p.x, p.y);
+                if(p.life <= 0) particles.splice(i, 1);
+            }
+            requestAnimationFrame(drawP);
+        }
+        drawP();
+        document.addEventListener('touchstart', e => createP(e.touches[0].clientX, e.touches[0].clientY));
+        document.addEventListener('click', e => createP(e.clientX, e.clientY));
 
-        class Particle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 15 + 10;
-                this.speedX = Math.random() * 6 - 3;
-                this.speedY = Math.random() * -6 - 2;
-                this.gravity = 0.1;
-                this.life = 1;
-                this.color = ['#ff758c', '#ff7eb3', '#ffffff'][Math.floor(Math.random() * 3)];
-            }
-            update() {
-                this.x += this.speedX;
-                this.speedY += this.gravity;
-                this.y += this.speedY;
-                this.life -= 0.02;
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = Math.max(0, this.life);
-                ctx.font = `${this.size}px Arial`;
-                ctx.fillStyle = this.color;
-                ctx.fillText('❤', this.x, this.y);
-                ctx.restore();
-            }
+        /* Musik */
+        let isPlaying = false;
+        const bgm = document.getElementById('bgm');
+        const mBtn = document.getElementById('music-btn');
+        function toggleMusic() {
+            if(isPlaying) { bgm.pause(); mBtn.classList.remove('playing'); } 
+            else { bgm.play(); mBtn.classList.add('playing'); }
+            isPlaying = !isPlaying;
         }
 
-        for(let i=0; i<40; i++) fireflies.push(new Firefly());
-
-        function animateCanvas() {
-            ctx.clearRect(0, 0, width, height);
-            fireflies.forEach(f => { f.update(); f.draw(); });
-            for(let i = particles.length - 1; i >= 0; i--) {
-                particles[i].update();
-                particles[i].draw();
-                if(particles[i].life <= 0) particles.splice(i, 1);
-            }
-            requestAnimationFrame(animateCanvas);
-        }
-        animateCanvas();
-
-        function createExplosion(x, y) {
-            for(let i=0; i<8; i++) particles.push(new Particle(x, y));
-        }
-        canvas.addEventListener('click', (e) => createExplosion(e.clientX, e.clientY));
-        canvas.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            createExplosion(touch.clientX, touch.clientY);
-        });
-
-        /* === LOGIKA WEB (LOADING, PIN, KADO) === */
-        const pesan = "akhirnya mendarat juga di zona nyaman. hari ini kerasa panjang banget ya? sekarang waktunya lepasin semua capeknya. mandi pakai air hangat, minum yang manis, terus rebahan... dan asal kamu tau, aku kangen banget sama kamu.";
-        let charIndex = 0;
-        const typingSpeed = 50; 
-
+        /* Loading -> UI */
         window.onload = () => {
             setTimeout(() => {
-                const loader = document.getElementById('loading-screen');
-                loader.style.opacity = '0';
+                document.getElementById('loading-screen').style.opacity = '0';
                 setTimeout(() => {
-                    loader.style.display = 'none';
-                    document.getElementById('main-container').classList.add('show');
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-ui').classList.add('show');
                 }, 1000);
             }, 2000);
         };
 
-        // Fungsi Cek PIN
+        /* Logika PIN Pad */
+        let pin = "";
+        const targetPin = "18042025";
+        const dots = document.querySelectorAll('.dot');
+        const pinUI = document.getElementById('pin-screen');
+        const teksPin = document.getElementById('pin-teks');
+
+        function updateDots() {
+            dots.forEach((d, i) => {
+                if(i < pin.length) d.classList.add('active');
+                else d.classList.remove('active');
+            });
+        }
+        function press(num) {
+            if(pin.length < 8) { pin += num; updateDots(); if(navigator.vibrate) navigator.vibrate(20); }
+            if(pin.length === 8) cekPin();
+        }
+        function hapus() { if(pin.length > 0) { pin = pin.slice(0,-1); updateDots(); } }
+        
         function cekPin() {
-            const pinVal = document.getElementById('input-pin').value;
-            const inputField = document.getElementById('input-pin');
-            const hint = document.getElementById('pin-hint');
-
-            if (pinVal === '18042025') {
-                document.getElementById('pin-step').style.display = 'none';
-                document.getElementById('step1').style.display = 'flex';
-                createExplosion(window.innerWidth/2, window.innerHeight/2);
-                if (navigator.vibrate) navigator.vibrate(50);
+            if(pin === targetPin) {
+                if(navigator.vibrate) navigator.vibrate([50,50,50]);
+                createP(w/2, h/2);
+                mBtn.style.opacity = '1'; 
+                pinUI.style.display = 'none';
+                document.getElementById('envelope-screen').style.display = 'flex';
             } else {
-                // Kalo salah
-                hint.style.display = 'block';
-                inputField.style.animation = 'none';
-                void inputField.offsetWidth; // trigger reflow
-                inputField.style.animation = 'shakeError 0.4s';
-                inputField.value = ''; // kosongin input
-                if (navigator.vibrate) navigator.vibrate([50, 50, 50]); // getar tanda salah
+                if(navigator.vibrate) navigator.vibrate(200);
+                pinUI.style.animation = 'none';
+                void pinUI.offsetWidth;
+                pinUI.style.animation = 'errorShake 0.4s';
+                teksPin.innerHTML = "coba tanggal jadian kita";
+                pin = ""; updateDots();
             }
         }
 
-        // Efek ketik perlahan
-        function typeWriter() {
-            if (charIndex < pesan.length) {
-                document.getElementById("text-typing").innerHTML += pesan.charAt(charIndex);
-                charIndex++;
-                setTimeout(typeWriter, typingSpeed);
+        /* Logika Amplop & Surat */
+        const pesan = "akhirnya mendarat juga di zona nyaman. hari ini kerasa panjang banget ya? sekarang waktunya lepasin semua capeknya. bersihin badan, ganti baju yang nyaman, terus rebahan... dan asal kamu tau, aku kangen banget sama kamu.";
+        let charI = 0;
+
+        function ngetik() {
+            if (charI < pesan.length) {
+                document.getElementById("teks-ketik").innerHTML += pesan.charAt(charI);
+                charI++; setTimeout(ngetik, 50);
             } else {
-                document.getElementById("text-typing").classList.remove('typing');
                 setTimeout(() => {
-                    const finalElements = document.getElementById('final-elements');
-                    finalElements.style.display = 'block';
-                    void finalElements.offsetWidth; 
-                    finalElements.classList.add('show');
-                }, 400);
+                    const finalDiv = document.getElementById('final-reveal');
+                    finalDiv.style.display = 'block';
+                    void finalDiv.offsetWidth;
+                    finalDiv.classList.add('show');
+                    // Aktifkan musik otomatis kalau browser ngizinin (opsional)
+                    if(!isPlaying) toggleMusic(); 
+                }, 500);
             }
         }
 
-        // Fungsi saat kado ditekan
-        function bukaKado() {
-            createExplosion(window.innerWidth/2, window.innerHeight/2); 
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
+        function bukaAmplop() {
+            if(navigator.vibrate) navigator.vibrate(100);
+            const amp = document.getElementById('amplop');
+            amp.classList.add('open');
             
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('step2').style.display = 'block';
-            
-            setTimeout(typeWriter, 400);
+            setTimeout(() => {
+                document.getElementById('envelope-screen').style.display = 'none';
+                document.getElementById('message-screen').style.display = 'block';
+                setTimeout(ngetik, 300);
+            }, 1500); // Nunggu amplop kebuka & surat naik
         }
+
+        /* Efek 3D Hologram Polaroid (Touch & Mouse) */
+        const card = document.getElementById('p-card');
+        document.addEventListener('mousemove', (e) => {
+            if(card.parentElement.classList.contains('show')) {
+                let xAxis = (window.innerWidth / 2 - e.pageX) / 20;
+                let yAxis = (window.innerHeight / 2 - e.pageY) / 20;
+                card.style.transform = `rotateY(${-xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+        document.addEventListener('touchmove', (e) => {
+            if(card.parentElement.classList.contains('show')) {
+                let touch = e.touches[0];
+                let xAxis = (window.innerWidth / 2 - touch.clientX) / 15;
+                let yAxis = (window.innerHeight / 2 - touch.clientY) / 15;
+                card.style.transform = `rotateY(${-xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+        // Reset rotasi pas dilepas
+        document.addEventListener('touchend', () => { if(card) card.style.transform = `rotateY(0deg) rotateX(0deg)`; });
+        document.addEventListener('mouseleave', () => { if(card) card.style.transform = `rotateY(0deg) rotateX(0deg)`; });
     </script>
 </body>
 </html>
